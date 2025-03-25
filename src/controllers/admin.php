@@ -9,6 +9,9 @@ class Admin extends Controller
     private $CommonModel;
     private $DashboardModel;
 
+    private $ProductModel;
+
+
 
     public function __construct()
     {
@@ -18,6 +21,7 @@ class Admin extends Controller
         $this->AuthModel = $this->model("AuthModel");
         $this->CheckModel = $this->model("CheckRole");
         $this->DashboardModel = $this->model("DashboardModel");
+        $this->ProductModel = $this->model("ProductModel");
     }
 
     function dashboard()
@@ -144,7 +148,7 @@ class Admin extends Controller
         }
         $this->view("main_layout", [
             "Title" => "Danh Sách Người Dùng",
-            "Page" => "admin/users_list",
+            "Page" => "admin/auth/users_list",
             "Script" => [
                 "auth/register",
                 "admin/users_list"
@@ -154,15 +158,113 @@ class Admin extends Controller
     }
     function user_detail($User_id)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
+            $fullname = $_POST['username'];
+            $phonenumber = $_POST['phonenumber'];
+            $email = $_POST['email'];
+            $role_id = $_POST['role_id'];
+            $status = $_POST['status'];
+            $updateResult = $this->UserModel->updateUser($User_id, $fullname, $phonenumber, $email, $role_id, $status);
+            if ($updateResult === true) {
+                $_SESSION['message'] = "Cập nhật thông tin thành công!";
+            } elseif ($updateResult === "no_changes") {
+                $_SESSION['error-message'] = "Không có gì thay đổi.";
+            } else {
+                $_SESSION['error-message'] = "Có lỗi xảy ra khi cập nhật thông tin.";
+            }
+            header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
+            exit();
+
+        }
         $this->view("main_layout", [
             "Title" => "Danh Sách Người Dùng",
-            "Page" => "admin/user_detail",
+            "Page" => "admin/auth/user_detail",
             "User" => $this->UserModel->getUserById($User_id),
             "AllRole" => $this->CommonModel->getAllRole(),
-            "Status" =>$this->CommonModel->getAllStatus()
+            "Status" => $this->CommonModel->getAllStatus()
         ]);
     }
 
+    function sellers_list()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách nhà xuất bản",
+            "Page" => "admin/auth/sellers_list",
+            "Sellers" => $this->UserModel->getUserRole(1),
+        ]);
+    }
+
+    function add_user()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách nhà xuất bản",
+            "Page" => "admin/auth/add_user",
+            "Script"=> [
+                "auth/register",
+                "auth/login",
+            ]
+        ]);
+    }
+    function products_list()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách nhà xuất bản",
+            "Page" => "admin/product/product_list",
+            "Script" => [
+                "admin/product_list",
+                "auth/login"
+            ],
+            "Books" => $this->ProductModel->getBooks(),
+            "Categories" => $this->ProductModel->getCategories(),
+            "BookStatus" => $this->ProductModel->getBookStatus(),
+            "Publishers" => $this->UserModel->getUserRole(1),
+            
+
+
+        ]);
+    }
+    function product_detail()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách nhà xuất bản",
+            "Page" => "admin/product/product_detail",
+        ]);
+    }
+    function add_product()
+    {
+        $this->view("main_layout", [
+            "Title" => "Thêm sản phẩm",
+            "Page" => "admin/product/add_product"
+        ]);
+    }
+    function orders_list()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách Đơn Hàng",
+            "Page" => "admin/order/order_list"
+        ]);
+    }
+    function order_detail()
+    {
+        $this->view("main_layout", [
+            "Title" => "Chi Tiết Đơn Hàng",
+            "Page" => "admin/order/order_detail"
+        ]);
+    }
+    function authors_list()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách Tác Giả",
+            "Page" => "admin/author/author_list",
+        ]);
+    }
+    function add_author()
+    {
+        $this->view("main_layout", [
+            "Title" => "Danh sách Tác Giả",
+            "Page" => "admin/author/add_author",
+        ]);
+    }
 }
 
 ?>

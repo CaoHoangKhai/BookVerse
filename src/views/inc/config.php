@@ -93,7 +93,7 @@ $admin_links = [
             [
                 'icon' => 'fas fa-user-plus',
                 'label' => 'Thêm Người Dùng',
-                'url' => APP_PATH . '/admin/users_list',
+                'url' => APP_PATH . '/admin/add_user',
             ],
         ],
     ],
@@ -108,22 +108,17 @@ $admin_links = [
             [
                 'icon' => 'fas fa-plus-circle',  // Dùng biểu tượng dấu cộng trong vòng tròn
                 'label' => 'Thêm Sách',
-                'url' => APP_PATH . '/admin/products_list',
+                'url' => APP_PATH . '/admin/add_product',
             ],
         ]
     ],
     [
-        'label_parent' => 'Quản lý Tác Giả',
+        'label_parent' => 'Quản lý Đơn Hàng',
         'children' => [
             [
                 'icon' => 'fas fa-pencil-alt',  // Biểu tượng bút dùng cho quản lý tác giả
                 'label' => 'Quản lý Tác Giả',
-                'url' => APP_PATH . '/admin/authors_list',
-            ],
-            [
-                'icon' => 'fas fa-user-plus',  // Biểu tượng dấu cộng cho Thêm Tác Giả
-                'label' => 'Thêm Tác Giả',
-                'url' => APP_PATH . '/admin/add_author',  // URL Thêm Tác Giả
+                'url' => APP_PATH . '/admin/orders_list',
             ],
         ]
     ],

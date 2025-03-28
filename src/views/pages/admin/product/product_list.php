@@ -65,9 +65,9 @@
                                 <label class="form-label"><strong>Giá</strong></label>
                                 <input type="number" class="form-control" name="price" id="price"
                                     placeholder="Nhập giá sách" required min="0">
-                                <!-- <div class="invalid-feedback">
+                                <div class="invalid-feedback">
                                     Giá không được bỏ trống và phải là số hợp lệ.
-                                </div> -->
+                                </div>
                             </div>
                             <!--Thể loại-->
                             <div class="col-md-6">
@@ -249,7 +249,8 @@
             ?>
             <tr>
                 <td><?= $counter++; ?></td>
-                <td><?= (mb_strlen($books["Title"], 'UTF-8') > 30) ? mb_substr($books["Title"], 0, 30, 'UTF-8') . '...' : $books["Title"] ?> </td>
+                <td><?= (mb_strlen($books["Title"], 'UTF-8') > 30) ? mb_substr($books["Title"], 0, 30, 'UTF-8') . '...' : $books["Title"] ?>
+                </td>
                 <td>
                     <img src="<?php echo $this->image_books($books["Category_type"], $books["Images"][0]); ?>"
                         alt="<?= $books["Title"] ?>" width="60" height="80"
@@ -258,7 +259,7 @@
 
                 <td><?= $books["Author_Name"] ?></td>
                 <td><?= $books["Category_name"] ?></td>
-                <td><?=  $books["quantity"]?></td>
+                <td><?= $books["quantity"] ?></td>
                 <td><?= number_format($books["Price"], 0, ',', '.') ?> đ</td>
                 <td>
                     <?php

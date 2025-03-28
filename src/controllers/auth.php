@@ -19,14 +19,16 @@ class Auth extends Controller
             $status = $this->AuthModel->checkStatus($email);
             if ($status === 2) {
                 $_SESSION['error-message'] = "Tài khoản của bạn đã bị hủy kích hoạt. Vui lòng liên hệ quản trị viên.";
-                return;
+                header("Location: " . APP_PATH . "/auth/login");
+                exit();
             }
             $user = $this->AuthModel->login($email, $password);
             if (!is_array($user)) {
                 $_SESSION['error-message'] = $user === "wrong_password"
                     ? "Mật khẩu không đúng."
                     : "Email không tồn tại. Hãy chuyển sang trang đăng ký.";
-                return;
+                header("Location: " . APP_PATH . "/auth/login");
+                exit();
             }
             $_SESSION['user_Info'] = [$user['User_id'], $email, $user['Role_id'], $user["Full_Name"]];
             $_SESSION['message'] = "Đăng nhập thành công.";
@@ -85,7 +87,6 @@ class Auth extends Controller
             "Title" => "Đăng Nhập",
             "Page" => "auth/register",
             "Script" => [
-
                 "auth/register",
                 "auth/showpassword"
             ]

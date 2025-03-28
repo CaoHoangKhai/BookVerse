@@ -7,29 +7,34 @@
 // 🚀 Danh sách liên kết cho User (Người dùng thông thường)
 $user_links = [
     [
-        'icon' => 'fas fa-user',
-        'label' => 'Hồ sơ của tôi',
-        'url' => APP_PATH . '/user/profile',
-    ],
-    [
-        'icon' => 'fas fa-heart',
-        'label' => 'Sách yêu thích',
-        'url' => APP_PATH . '/user/favorite',
-    ],
-    [
-        'icon' => 'fas fa-shopping-cart',
-        'label' => 'Đơn hàng của tôi',
-        'url' => APP_PATH . '/user/order',
-    ],
-    [
-        'icon' => 'fa fa-location-dot',
-        'label' => 'Địa chỉ của tôi',
-        'url' => APP_PATH . '/user/location',
-    ],
-    [
-        'icon' => 'fas fa-comments',
-        'label' => 'Đánh giá của tôi',
-        'url' => APP_PATH . '/user/comment',
+        'label_parent' => 'Thông tin Cá Nhân',
+        'children' => [
+            [
+                'icon' => 'fas fa-user',
+                'label' => 'Hồ sơ của tôi',
+                'url' => APP_PATH . '/user/profile',
+            ],
+            [
+                'icon' => 'fas fa-heart',
+                'label' => 'Sách yêu thích',
+                'url' => APP_PATH . '/user/favorite',
+            ],
+            [
+                'icon' => 'fas fa-shopping-cart',
+                'label' => 'Đơn hàng của tôi',
+                'url' => APP_PATH . '/user/order',
+            ],
+            [
+                'icon' => 'fa fa-location-dot',
+                'label' => 'Địa chỉ của tôi',
+                'url' => APP_PATH . '/user/location',
+            ],
+            [
+                'icon' => 'fas fa-comments',
+                'label' => 'Đánh giá của tôi',
+                'url' => APP_PATH . '/user/comment',
+            ],
+        ],
     ],
 ];
 
@@ -82,12 +87,12 @@ $admin_links = [
         'children' => [
             [
                 'icon' => 'fas fa-users',
-                'label' => 'Quản lý Khách Hàng',
+                'label' => 'Khách Hàng',
                 'url' => APP_PATH . '/admin/users_list',
             ],
             [
                 'icon' => 'fas fa-store',
-                'label' => 'Quản lý Nhà Bán Sách',
+                'label' => 'Nhà Bán Sách',
                 'url' => APP_PATH . '/admin/sellers_list',
             ],
             [
@@ -102,7 +107,7 @@ $admin_links = [
         'children' => [
             [
                 'icon' => 'fas fa-book',
-                'label' => 'Quản lý Sách',
+                'label' => 'Sách',
                 'url' => APP_PATH . '/admin/products_list',
             ],
             [
@@ -113,11 +118,26 @@ $admin_links = [
         ]
     ],
     [
+        'label_parent' => 'Quản lý Tin Tức',
+        'children' => [
+            [
+                'icon' => 'fas fa-book',
+                'label' => 'Tin Tức',
+                'url' => APP_PATH . '/admin/news_list',
+            ],
+            [
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Thêm Tin Tức',
+                'url' => APP_PATH . '/admin/add_news',
+            ],
+        ]
+    ],
+    [
         'label_parent' => 'Quản lý Đơn Hàng',
         'children' => [
             [
-                'icon' => 'fas fa-pencil-alt',  // Biểu tượng bút dùng cho quản lý tác giả
-                'label' => 'Quản lý Tác Giả',
+                'icon' => 'fas fa-box',  // Biểu tượng bút dùng cho quản lý tác giả
+                'label' => 'Đơn Hàng',
                 'url' => APP_PATH . '/admin/orders_list',
             ],
         ]
@@ -127,7 +147,7 @@ $admin_links = [
         'children' => [
             [
                 'icon' => 'fas fa-pencil-alt',  // Biểu tượng bút dùng cho quản lý tác giả
-                'label' => 'Quản lý Tác Giả',
+                'label' => 'Tác Giả',
                 'url' => APP_PATH . '/admin/authors_list',
             ],
             [
@@ -137,7 +157,7 @@ $admin_links = [
             ],
         ]
     ],
-    
+
 ];
 
 

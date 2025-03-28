@@ -94,7 +94,7 @@ print_r($orders);
                 <?php endif; ?>
 
                 <div class="text-center">
-                    <a href="/<?= APP_PATH ?>/admin/users_list" class="btn btn-primary">
+                    <a href="<?= APP_PATH ?>/admin/users_list" class="btn btn-primary">
                         <i class="fa fa-reply" aria-hidden="true"></i> Quay lại
                     </a>
 

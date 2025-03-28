@@ -11,7 +11,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 col">
                     <!-- Cột đầu tiên (BookSwapHub) -->
                     <li class="nav-item">
-                        <a class="navbar-brand" href="<?= APP_PATH ?>/home">BookSwapHub</a>
+                        <a class="navbar-brand" href="<?= APP_PATH ?>/home"><?= htmlspecialchars(ltrim(APP_PATH, '/')) ?></a>
                     </li>
                 </ul>
 

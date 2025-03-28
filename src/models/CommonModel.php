@@ -29,5 +29,16 @@ class CommonModel extends DB
             return [];
         }
     }
+    function getNationality()
+    {
+        $sql = "SELECT * FROM countries";
+        $result = $this->conn->query($sql);
+
+        $countries = [];
+        while ($row = $result->fetch_assoc()) {
+            $countries[] = $row;
+        }
+        return $countries;
+    }
 }
 ?>

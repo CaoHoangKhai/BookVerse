@@ -111,10 +111,9 @@
                     </div>
                 </form>
             </div>
-
             <!-- Tab Thêm từ file -->
             <div class="tab-pane fade" id="auto-add-pane" role="tabpanel" aria-labelledby="auto-add-tab" tabindex="0">
-                <form class="row g-3 needs-validation" method="GET" enctype="multipart/form-data" novalidate>
+                <form class="row g-3 needs-validation" method="POST" enctype="multipart/form-data" novalidate>
                     <div class="col-md-12 mb-3">
                         <label for="inputPassword4" class="form-label"><strong>Mật khẩu của
                                 Admin*</strong></label>
@@ -151,3 +150,18 @@
         </div>
     </div>
 </div>
+<?php if (isset($_SESSION['parsed_data'])): ?>
+    <div id="result-container" class="mt-3">
+        <?php
+        echo $_SESSION['parsed_data'];
+        unset($_SESSION['parsed_data']); // Xóa session sau khi hiển thị
+        ?>
+    </div>
+
+    <script>
+        // Sau 10 giây (10000ms) ẩn div kết quả
+        setTimeout(function () {
+            document.getElementById("result-container").style.display = "none";
+        }, 10000);
+    </script>
+<?php endif; ?>

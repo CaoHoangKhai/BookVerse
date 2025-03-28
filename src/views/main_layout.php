@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Include necessary files
 include "inc/config.php";
 include "inc/head.php";
@@ -9,7 +9,7 @@ include "inc/head.php";
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <aside class="col-md-3 col-lg-2 position-sticky top-0 vh-100" style="overflow-y: auto; background-color: #fff;">
+            <aside class="col-md-3 col-lg-2 position-sticky top-0 vh-100 sidebar-custom" style="overflow-y: auto;">
                 <?php
                 include "inc/navbar.php";
                 ?>

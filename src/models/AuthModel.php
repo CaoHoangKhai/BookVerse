@@ -1,17 +1,15 @@
 <?php
 class AuthModel extends DB
 {
-    function getByEmail($email)
+    public function getByEmail($email)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM user WHERE Email = ?");
+        $stmt = $this->conn->prepare("SELECT User_id, Email FROM user WHERE Email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            return true;
-        }
-        return false;
+        return $result->fetch_assoc(); // Trả về User_id và Email thay vì chỉ true/false
     }
+
     public function checkStatus($email)
     {
         $stmt = $this->conn->prepare("SELECT Status FROM user WHERE Email = ?");
@@ -42,17 +40,15 @@ class AuthModel extends DB
         }
         return "email_not_found";
     }
-    public function checkPhoneNumber($phonenumber)
+    function checkPhoneNumber($phonenumber)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM user WHERE Phone_Number = ?");
+        $stmt = $this->conn->prepare("SELECT User_id, Phone_Number FROM user WHERE Phone_Number = ?");
         $stmt->bind_param("s", $phonenumber);
         $stmt->execute();
         $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            return true;
-        }
-        return false;
+        return $result->fetch_assoc(); // Trả về User_id và Phone_Number
     }
+
     public function create($fullname, $password, $phonenumber, $email, $city, $district, $address)
     {
         $this->conn->begin_transaction();

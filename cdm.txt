@@ -449,3 +449,14 @@ policy => chính sách
 product =>  hiển thị sản phẩm (bán sách)
 seller => cho nhà đăng ký đăng lên sản phẩm
 user => cho người dùng (khách hàng)
+
+
+
+title=1212121
+description=sc
+image1=nguyen-ngoc-tu-sach-vanvn.jpg
+content1=<p>scsc<%2Fp>
+image2=
+content2=<p>sc<%2Fp>
+addNews=Thêm+Tin+Tức
+current_date=2025-03-29

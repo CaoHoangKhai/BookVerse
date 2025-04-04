@@ -1,6 +1,6 @@
 <div class="container lh-base">
     <h5 class="fw-semibold fs-4 mb-3">Hướng Dẫn Mua Hàng</h5>
-    <p class="mb-1">Quý khách có thể đặt hàng trực tuyến trên <b>BookSwapHub</b> thông qua 8 bước đặt hàng cơ bản.</p>
+    <p class="mb-1">Quý khách có thể đặt hàng trực tuyến trên <?= htmlspecialchars(ltrim(APP_PATH, '/')) ?> thông qua 8 bước đặt hàng cơ bản.</p>
     <p class="mb-1">Vui lòng tham khảo thông tin chi tiết về từng bước đặt hàng như sau:</p>
     <!----->
     <p class="mb-1"><b>1. Tìm kiếm sản phẩm</b></p>
@@ -24,7 +24,7 @@
     <p class="mb-1">Để đặt nhiều sản phẩm khác nhau vào cùng 1 đơn hàng, vui lòng thực hiện theo các bước sau:</p>
 
     <ol class="ps-3 mb-3" style="list-style-type: lower-alpha;">
-        <li>Chọn "Tiếp tục mua sắm" hoặc click vào logo <b>BookSwapHub</b> để trở về trang chủ.</li>
+        <li>Chọn "Tiếp tục mua sắm" hoặc click vào logo <?= htmlspecialchars(ltrim(APP_PATH, '/')) ?> để trở về trang chủ.</li>
         <li>Thêm sản phẩm vào giỏ hàng như ở Bước 2.</li>
     </ol>
     <p class="mb-1">*Quá trình này có thể lặp lại cho đến khi quý khách hoàn tất việc bỏ tất cả các sản phẩm cần đặt mua
@@ -38,14 +38,14 @@
     </ol>
 
     <p class="mb-1"><b> 4. Đăng nhập hoặc đăng ký tài khoản</b></p>
-    <p class="mb-1">Quý khách vui lòng đăng nhập bằng tài khoản đã có ở <b>BookSwapHub</b>.</p>
+    <p class="mb-1">Quý khách vui lòng đăng nhập bằng tài khoản đã có ở <?= htmlspecialchars(ltrim(APP_PATH, '/')) ?>.</p>
     <p class="mb-1">Trong trường hợp chưa đăng ký tài khoản, quý khách có thể chọn dòng "Tạo tài khoản" để đăng ký tài
-        khoản tại <b>BookSwapHub</b>.</p>
+        khoản tại <?= htmlspecialchars(ltrim(APP_PATH, '/')) ?>.</p>
     <p class="mb-1">Sau khi đã hoàn tất, quý khách sẽ được quay về trang đăng nhập để quý khách tiến hành đăng nhập.</p>
     <p class="mb-1"><b>5.Điền địa chỉ giao hàng</b></p>
     <p class="mb-1"><b>6.Chọn phương thức thanh toán, và "Đặt Mua"</b></p>
     <p class="mb-1">
-        <b>BookSwapHub</b> hỗ trợ giao hàng và thanh toán tận nơi cho các đơn hàng có tổng trị giá từ 200.000.000đ trở
+        <?= htmlspecialchars(ltrim(APP_PATH, '/')) ?> hỗ trợ giao hàng và thanh toán tận nơi cho các đơn hàng có tổng trị giá từ 200.000.000đ trở
         xuống trên toàn quốc. Quý khách vui lòng tham khảo thêm tại: Các Phương Thức Thanh Toán
     </p>
     <p class="mb-1">

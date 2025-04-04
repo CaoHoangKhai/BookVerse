@@ -13,7 +13,7 @@ class CheckRole extends DB
     {
         if (!isset($_SESSION['user_Info']) || $_SESSION['user_Info'][2] != 1) {
             $_SESSION['error-message'] = "Bạn không có quyền truy cập trang này.";
-            header("Location: " . APP_PATH . "/user/profile");
+            header("Location: " . APP_PATH . "/home");
             exit();
         }
         return $_SESSION['user_Info'][0];
@@ -22,7 +22,7 @@ class CheckRole extends DB
     {
         if (!isset($_SESSION['user_Info'][2]) || $_SESSION['user_Info'][2] != 2) {
             $_SESSION['error-message'] = "Bạn không có quyền truy cập trang này.";
-            header("Location: " . APP_PATH . "/user/profile");
+            header("Location: " . APP_PATH . "/home");
             exit();
         }
     }

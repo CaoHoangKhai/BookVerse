@@ -1,190 +1,236 @@
 <?php
-
 // ==========================
 // Cấu hình danh sách menu theo vai trò
 // ==========================
 
-// 🚀 Danh sách liên kết cho User (Người dùng thông thường)
-$user_links = [
-    [
-        'label_parent' => 'Thông tin Cá Nhân',
-        'children' => [
-            [
-                'icon' => 'fas fa-user',
-                'label' => 'Hồ sơ của tôi',
-                'url' => APP_PATH . '/user/profile',
-            ],
-            [
-                'icon' => 'fas fa-heart',
-                'label' => 'Sách yêu thích',
-                'url' => APP_PATH . '/user/favorite',
-            ],
-            [
-                'icon' => 'fas fa-shopping-cart',
-                'label' => 'Đơn hàng của tôi',
-                'url' => APP_PATH . '/user/order',
-            ],
-            [
-                'icon' => 'fa fa-location-dot',
-                'label' => 'Địa chỉ của tôi',
-                'url' => APP_PATH . '/user/location',
-            ],
-            [
-                'icon' => 'fas fa-comments',
-                'label' => 'Đánh giá của tôi',
-                'url' => APP_PATH . '/user/comment',
-            ],
-        ],
-    ],
-];
-
-// 🚀 Danh sách liên kết cho Admin (Quản trị viên)
-// $admin_links = [
-//     [
-//         'icon' => 'fas fa-chart-line', 
-//         'label' => 'Thống kê Doanh thu', 
-//         'url' => APP_PATH . '/admin/dashboard',
-//     ],
-//     [
-//         'icon' => 'fas fa-id-card', 
-//         'label' => 'Hồ sơ của tôi',
-//         'url' => '#',
-//     ],
-//     [
-//         'icon' => 'fas fa-users', 
-//         'label' => 'Quản lý Khách Hàng', 
-//         'url' => APP_PATH . '/admin/users_list',
-//     ],
-//     [
-//         'icon' => 'fas fa-store', 
-//         'label' => 'Quản lý Nhà Bán Sách',
-//         'url' => APP_PATH . '/admin/sellers_list',
-//     ],
-//     [
-//         'icon' => 'fas fa-book',
-//         'label' => 'Quản lý Sách',
-//         'url' => APP_PATH . '/admin/products_list',
-//     ],
-//     [
-//         'icon' => 'fas fa-box',
-//         'label' => 'Quản lý Đơn Hàng',
-//         'url' => APP_PATH . '/admin/orders_list',
-//     ],
-//     [
-//         'icon' => 'fas fa-comments',
-//         'label' => 'Quản lý Đánh Giá',
-//         'url' => '#',
-//     ],
-//     [
-//         'icon' => 'fas fa-book-open',
-//         'label' => 'Quản lý Tác Giả',
-//         'url' => APP_PATH . '/admin/authors_list',
-//     ],
-// ];
 $admin_links = [
     [
-        'label_parent' => 'Quản lý Người Dùng',
+        'label_parent' => 'Người Dùng',
         'children' => [
             [
                 'icon' => 'fas fa-users',
-                'label' => 'Khách Hàng',
+                'label' => 'Danh sách khách hàng',
                 'url' => APP_PATH . '/admin/users_list',
             ],
             [
                 'icon' => 'fas fa-store',
-                'label' => 'Nhà Bán Sách',
+                'label' => 'Danh sách người bán',
                 'url' => APP_PATH . '/admin/sellers_list',
             ],
             [
                 'icon' => 'fas fa-user-plus',
-                'label' => 'Thêm Người Dùng',
+                'label' => 'Tạo tài khoản mới',
                 'url' => APP_PATH . '/admin/add_user',
             ],
         ],
     ],
     [
-        'label_parent' => 'Quản lý Sản Phẩm',
+        'label_parent' => 'Sản Phẩm',
         'children' => [
             [
                 'icon' => 'fas fa-book',
-                'label' => 'Sách',
+                'label' => 'Quản lý sách',
                 'url' => APP_PATH . '/admin/products_list',
             ],
             [
-                'icon' => 'fas fa-plus-circle',  // Dùng biểu tượng dấu cộng trong vòng tròn
-                'label' => 'Thêm Sách',
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Thêm sách mới',
                 'url' => APP_PATH . '/admin/add_product',
             ],
         ]
     ],
     [
-        'label_parent' => 'Quản lý Tin Tức',
+        'label_parent' => 'Tin Tức',
         'children' => [
             [
                 'icon' => 'fas fa-book',
-                'label' => 'Tin Tức',
+                'label' => 'Danh sách tin tức',
                 'url' => APP_PATH . '/admin/news_list',
             ],
             [
                 'icon' => 'fas fa-plus-circle',
-                'label' => 'Thêm Tin Tức',
+                'label' => 'Thêm tin mới',
                 'url' => APP_PATH . '/admin/add_news',
             ],
         ]
     ],
     [
-        'label_parent' => 'Quản lý Đơn Hàng',
+        'label_parent' => 'Đơn Hàng',
         'children' => [
             [
-                'icon' => 'fas fa-box',  // Biểu tượng bút dùng cho quản lý tác giả
-                'label' => 'Đơn Hàng',
+                'icon' => 'fas fa-box',
+                'label' => 'Quản lý đơn hàng',
                 'url' => APP_PATH . '/admin/orders_list',
             ],
         ]
     ],
     [
-        'label_parent' => 'Quản lý Tác Giả',
+        'label_parent' => 'Tác Giả',
         'children' => [
             [
-                'icon' => 'fas fa-pencil-alt',  // Biểu tượng bút dùng cho quản lý tác giả
-                'label' => 'Tác Giả',
+                'icon' => 'fas fa-pencil-alt',
+                'label' => 'Danh sách tác giả',
                 'url' => APP_PATH . '/admin/authors_list',
             ],
             [
-                'icon' => 'fas fa-user-plus',  // Biểu tượng dấu cộng cho Thêm Tác Giả
-                'label' => 'Thêm Tác Giả',
-                'url' => APP_PATH . '/admin/add_author',  // URL Thêm Tác Giả
+                'icon' => 'fas fa-user-plus',
+                'label' => 'Thêm tác giả mới',
+                'url' => APP_PATH . '/admin/add_author',
             ],
         ]
     ],
-
 ];
 
-
-// 🚀 Danh sách liên kết cho Seller (Người bán sách)
 $seller_links = [
     [
-        'icon' => 'fas fa-chart-line',
-        'label' => 'Doanh thu của tôi',
-        'url' => APP_PATH . '/seller/revenue',
+        'label_parent' => 'Bảng Điều Khiển',
+        'children' => [
+            [
+                'icon' => 'fas fa-tachometer-alt',
+                'label' => 'Thống kê tổng quan',
+                'url' => APP_PATH . '/seller/dashboard',
+            ],
+        ]
     ],
     [
-        'icon' => 'fas fa-store',
-        'label' => 'Quản lý Gian Hàng',
-        'url' => APP_PATH . '/seller/store',
+        'label_parent' => 'Doanh Thu',
+        'children' => [
+            [
+                'icon' => 'fas fa-chart-line',
+                'label' => 'Thống kê doanh thu',
+                'url' => APP_PATH . '/seller/revenue',
+            ],
+        ]
     ],
     [
-        'icon' => 'fas fa-book',
-        'label' => 'Sách của tôi',
-        'url' => APP_PATH . '/seller/my_books',
+        'label_parent' => 'Gian Hàng Của Tôi',
+        'children' => [
+            [
+                'icon' => 'fas fa-store',
+                'label' => 'Quản lý gian hàng',
+                'url' => APP_PATH . '/seller/store',
+            ],
+            [
+                'icon' => 'fas fa-box',
+                'label' => 'Xử lý đơn hàng',
+                'url' => APP_PATH . '/seller/my_orders',
+            ],
+        ]
     ],
     [
-        'icon' => 'fas fa-box',
-        'label' => 'Đơn hàng của tôi',
-        'url' => APP_PATH . '/seller/orders',
+        'label_parent' => 'Quản Lý Sách',
+        'children' => [
+            [
+                'icon' => 'fas fa-book',
+                'label' => 'Danh sách sách đã đăng',
+                'url' => APP_PATH . '/seller/my_books',
+            ],
+            [
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Đăng sách mới',
+                'url' => APP_PATH . '/seller/add_book',
+            ],
+        ]
     ],
-
+    [
+        'label_parent' => 'Tin Tức Của Tôi',
+        'children' => [
+            [
+                'icon' => 'fas fa-book',
+                'label' => 'Danh sách bài viết',
+                'url' => APP_PATH . '/seller/my_news',
+            ],
+            [
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Tạo bài viết mới',
+                'url' => APP_PATH . '/seller/add_new',
+            ],
+        ]
+    ],
 ];
+
+
+
+// 🚀 Danh sách liên kết cho Admin (Quản trị viên)
+$admin_links = [
+    [
+        'label_parent' => 'Người Dùng',
+        'children' => [
+            [
+                'icon' => 'fas fa-users',
+                'label' => 'Danh sách khách hàng',
+                'url' => APP_PATH . '/admin/users_list',
+            ],
+            [
+                'icon' => 'fas fa-store',
+                'label' => 'Danh sách người bán',
+                'url' => APP_PATH . '/admin/sellers_list',
+            ],
+            [
+                'icon' => 'fas fa-user-plus',
+                'label' => 'Tạo tài khoản mới',
+                'url' => APP_PATH . '/admin/add_user',
+            ],
+        ],
+    ],
+    [
+        'label_parent' => 'Sản Phẩm',
+        'children' => [
+            [
+                'icon' => 'fas fa-book',
+                'label' => 'Quản lý sách',
+                'url' => APP_PATH . '/admin/products_list',
+            ],
+            [
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Thêm sách mới',
+                'url' => APP_PATH . '/admin/add_product',
+            ],
+        ]
+    ],
+    [
+        'label_parent' => 'Tin Tức',
+        'children' => [
+            [
+                'icon' => 'fas fa-book',
+                'label' => 'Danh sách tin tức',
+                'url' => APP_PATH . '/admin/news_list',
+            ],
+            [
+                'icon' => 'fas fa-plus-circle',
+                'label' => 'Thêm tin mới',
+                'url' => APP_PATH . '/admin/add_news',
+            ],
+        ]
+    ],
+    [
+        'label_parent' => 'Đơn Hàng',
+        'children' => [
+            [
+                'icon' => 'fas fa-box',
+                'label' => 'Quản lý đơn hàng',
+                'url' => APP_PATH . '/admin/orders_list',
+            ],
+        ]
+    ],
+    [
+        'label_parent' => 'Tác Giả',
+        'children' => [
+            [
+                'icon' => 'fas fa-pencil-alt',
+                'label' => 'Danh sách tác giả',
+                'url' => APP_PATH . '/admin/authors_list',
+            ],
+            [
+                'icon' => 'fas fa-user-plus',
+                'label' => 'Thêm tác giả mới',
+                'url' => APP_PATH . '/admin/add_author',
+            ],
+        ]
+    ],
+];
+
+
 
 // ==========================
 // Cấu hình danh sách footer

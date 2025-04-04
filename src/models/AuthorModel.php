@@ -162,9 +162,6 @@ class AuthorModel extends DB
         }
         return false;
     }
-
-
-
 }
 
 ?>

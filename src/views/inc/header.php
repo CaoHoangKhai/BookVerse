@@ -1,8 +1,11 @@
 <!-- Banner Logo -->
-<a href="<?= APP_PATH ?>/home">
-    <img src="<?= APP_PATH ?>/public/media/photos/head/head_<?= rand(0, 1) ?>.webp?" alt="Logo" class="banner-logo"
-        style="width:1515px; height:70px; margin-top:5px;">
-</a>
+<div class="w-100 text-center">
+    <a href="<?= APP_PATH ?>/home">
+        <img src="<?= APP_PATH ?>/public/media/photos/head/head_<?= rand(0, 1) ?>.webp?" alt="Logo"
+            class="img-fluid w-100">
+    </a>
+</div>
+
 
 <header class="bg-body-tertiary">
     <nav class="navbar navbar-expand-lg">
@@ -11,7 +14,8 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 col">
                     <!-- Cột đầu tiên (BookSwapHub) -->
                     <li class="nav-item">
-                        <a class="navbar-brand" href="<?= APP_PATH ?>/home"><?= htmlspecialchars(ltrim(APP_PATH, '/')) ?></a>
+                        <a class="navbar-brand"
+                            href="<?= APP_PATH ?>/home"><?= htmlspecialchars(ltrim(APP_PATH, '/')) ?></a>
                     </li>
                 </ul>
 
@@ -35,9 +39,9 @@
                     </a>
 
 
-                    <a href="<?= APP_PATH ?>/auth/cart" class="btn btn-outline-success">
+                    <!-- <a href="<?= APP_PATH ?>/auth/cart" class="btn btn-outline-success">
                         <i class="fas fa-shopping-cart"></i>
-                    </a>
+                    </a> -->
 
                     <?php
                     if (isset($_SESSION['user_Info']) && !empty($_SESSION['user_Info'])) {
@@ -46,10 +50,11 @@
                         // Kiểm tra vai trò của người dùng
                         if ($userInfo[2] == 0) {
                             // Người dùng thường
+                            echo "<a href='" . APP_PATH . "//auth/cart' class='btn btn-outline-success'><i class='fas fa-shopping-cart'></i></a>";
                             echo "<a href='" . APP_PATH . "/user/profile' class='btn btn-outline-success'><i class='fas fa-user'></i></a>";
                         } elseif ($userInfo[2] == 1) {
                             // Người bán sách
-                            echo "<a href='" . APP_PATH . "/seller' class='btn btn-outline-success'><i class='fas fa-book'></i></a>";
+                            echo "<a href='" . APP_PATH . "/seller/dashboard' class='btn btn-outline-success'><i class='fas fa-book'></i></a>";
                         } elseif ($userInfo[2] == 2) {
                             // Admin
                             echo "<a href='" . APP_PATH . "/admin/dashboard' class='btn btn-outline-success'><i class='fas fa-user-shield'></i></a>";
@@ -98,6 +103,7 @@
                 </div>
             </div>
         </div>
-        <hr>
+
     </div>
 </header>
+<hr>

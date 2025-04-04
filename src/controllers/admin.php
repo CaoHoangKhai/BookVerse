@@ -12,7 +12,7 @@ class Admin extends Controller
     private $CategoryModel;
     private $AuthorModel;
     private $OrderModel;
-
+    private $NewsModel;
     public function __construct()
     {
         parent::__construct();
@@ -25,8 +25,8 @@ class Admin extends Controller
         $this->CategoryModel = $this->model("CategoryModel");
         $this->AuthorModel = $this->model("AuthorModel");
         $this->OrderModel = $this->model("OrderModel");
+        $this->NewsModel = $this->model("NewsModel");
     }
-
     function dashboard()
     {
         $this->CheckModel->checkAdminPermission();
@@ -39,7 +39,6 @@ class Admin extends Controller
             "CountOrder" => $this->DashboardModel->getCountOrder(),
         ]);
     }
-
     function users_list()
     {
         $this->CheckModel->checkAdminPermission();
@@ -154,7 +153,7 @@ class Admin extends Controller
             "Page" => "admin/auth/users_list",
             "Script" => [
                 "auth/register",
-                "admin/users_list"
+                "users/users_list"
             ],
             "Users" => $this->UserModel->getUserRole(0),
         ]);
@@ -168,6 +167,44 @@ class Admin extends Controller
             $email = $_POST['email'];
             $role_id = $_POST['role_id'];
             $status = $_POST['status'];
+            // Lấy thông tin người dùng hiện tại
+            $oldUser = $this->UserModel->getUserById($User_id);
+
+            if ($email !== $oldUser['Email']) { // Chỉ kiểm tra nếu email bị thay đổi
+                if (!$this->UserModel->isValidEmail($email)) {
+                    $_SESSION['error-message'] = "Email không đúng định dạng.";
+                    header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
+                    exit();
+                }
+
+                // Kiểm tra xem email có tồn tại không
+                $existingEmail = $this->AuthModel->getByEmail($email);
+                if ($existingEmail && $existingEmail['User_id'] != $User_id) {
+                    $_SESSION['error-message'] = "Email đã tồn tại!";
+                    header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
+                    exit();
+                }
+            }
+
+
+            // Kiểm tra số điện thoại nếu thay đổi
+            if ($phonenumber !== $oldUser['Phone_Number']) { // Chỉ kiểm tra nếu số điện thoại bị thay đổi
+                if (!$this->UserModel->isValidPhoneNumber($phonenumber)) {
+                    $_SESSION['error-message'] = "Số điện thoại không đúng định dạng.";
+                    header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
+                    exit();
+                }
+
+                // Kiểm tra nếu số điện thoại đã tồn tại và khác số hiện tại
+                $existingPhone = $this->AuthModel->checkPhoneNumber($phonenumber);
+                if ($existingPhone && $existingPhone['User_id'] != $User_id) {
+                    $_SESSION['error-message'] = "Số điện thoại đã tồn tại!";
+                    header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
+                    exit();
+                }
+            }
+
+            // Cập nhật thông tin người dùng
             $updateResult = $this->UserModel->updateUser($User_id, $fullname, $phonenumber, $email, $role_id, $status);
             if ($updateResult === true) {
                 $_SESSION['message'] = "Cập nhật thông tin thành công!";
@@ -178,7 +215,6 @@ class Admin extends Controller
             }
             header("Location: " . APP_PATH . "/admin/user_detail/$User_id");
             exit();
-
         }
         $this->view("main_layout", [
             "Title" => "Danh Sách Người Dùng",
@@ -188,7 +224,6 @@ class Admin extends Controller
             "Status" => $this->CommonModel->getAllStatus()
         ]);
     }
-
     function sellers_list()
     {
         $this->CheckModel->checkAdminPermission();
@@ -198,7 +233,6 @@ class Admin extends Controller
             "Sellers" => $this->UserModel->getUserRole(1),
         ]);
     }
-
     function add_user()
     {
         $this->CheckModel->checkAdminPermission();
@@ -384,7 +418,7 @@ class Admin extends Controller
             "Title" => "Danh sách nhà xuất bản",
             "Page" => "admin/product/product_list",
             "Script" => [
-                "admin/product_list",
+                "products/product_list",
                 "auth/login"
             ],
             "Books" => $this->ProductModel->getBooks(),
@@ -671,7 +705,6 @@ class Admin extends Controller
             "Authors" => $this->AuthorModel->getAllAuthors(),
         ]);
     }
-
     function author_detail($Author_id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_author'])) {
@@ -782,17 +815,86 @@ class Admin extends Controller
     function news_list()
     {
         $this->view("main_layout", [
-            "Title" => "",
+            "Title" => "Danh sách Tin Tức",
             "Page" => "admin/news/news_list",
+            "Script" => ["news/news_list"],
+            "News" => $this->NewsModel->getNewsAdmin(),
         ]);
     }
     function add_news()
     {
+        if (isset($_POST['addNews'])) {
+            $title = $_POST['title'];
+            $description = $_POST['description'];
+            $content1 = $_POST['content1'];
+            $content2 = !empty($_POST['content2']) ? $_POST['content2'] : ""; // Nếu trống
+            $current_date = $_POST['current_date'];
+            $status = isset($_POST['status']) ? $_POST['status'] : 0;
+            $user_id = $_SESSION['user_Info'][0];
+
+            $targetDir = $_SERVER['DOCUMENT_ROOT'] . APP_PATH . "/public/media/photos/news/";
+
+            // Xử lý image1
+            $image1 = $_FILES['image1']['name'];
+            $targetFile1 = $targetDir . basename($image1);
+            $imageFileType1 = strtolower(pathinfo($targetFile1, PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+            if (!in_array($imageFileType1, $allowed)) {
+                $_SESSION['error-message'] = "Ảnh 1 không hợp lệ";
+                header("Location: " . APP_PATH . "/admin/add_news");
+                exit;
+            }
+
+            // Xử lý image2 (có thể trống)
+            $image2 = !empty($_FILES['image2']['name']) ? $_FILES['image2']['name'] : "";
+            if (!empty($image2)) {
+                $targetFile2 = $targetDir . basename($image2);
+                $imageFileType2 = strtolower(pathinfo($targetFile2, PATHINFO_EXTENSION));
+                if (!in_array($imageFileType2, $allowed)) {
+                    $_SESSION['error-message'] = "Ảnh 2 không hợp lệ";
+                    header("Location: " . APP_PATH . "/admin/add_news");
+                    exit;
+                }
+            }
+
+            // Upload ảnh
+            move_uploaded_file($_FILES['image1']['tmp_name'], $targetFile1);
+            if (!empty($image2)) {
+                move_uploaded_file($_FILES['image2']['tmp_name'], $targetFile2);
+            }
+
+            // Gọi Model
+            $result = $this->NewsModel->createNews(
+                $user_id,
+                $title,
+                $description,
+                $image1,
+                $content1,
+                $image2,
+                $content2,
+                $current_date,
+                $status
+            );
+
+            if ($result) {
+                $_SESSION['message'] = "Thêm tin tức thành công";
+                header("Location: " . APP_PATH . "/admin/add_news");
+                exit;
+            } else {
+                $_SESSION['error-message'] = "Lỗi khi thêm tin tức";
+                header("Location: " . APP_PATH . "/admin/add_news");
+            }
+        }
+
+        // Gọi view
         $this->view("main_layout", [
-            "Title" => "",
-            "Page" => "admin/news/news_list",
+            "Title" => "Thêm Tin Tức",
+            "Page" => "admin/news/add_news",
+            "Script" => ["auth/login"]
         ]);
     }
-}
 
+
+}
 ?>

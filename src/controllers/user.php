@@ -22,6 +22,7 @@ class User extends Controller
             $phonenumber = trim($_POST["phonenumber"]);
             $email = trim($_POST["email"]);
             $currentUser = $this->UserModel->getUserById($this->User_id);
+
             if (!$this->UserModel->isValidEmail($email)) {
                 $_SESSION['error-message'] = "Email không đúng định dạng.";
                 header("Location: " . APP_PATH . "/user/profile");
@@ -50,6 +51,15 @@ class User extends Controller
             }
             $result = $this->UserModel->updateUser($this->User_id, $username, $phonenumber, $email);
             if ($result) {
+                $updatedUser = $this->UserModel->getUserById($this->User_id);
+
+                // Cập nhật lại session với thông tin mới theo dạng mảng tuần tự
+                $_SESSION['user_Info'] = [
+                    $updatedUser['User_id'],
+                    $updatedUser['Email'],
+                    $updatedUser['Role_id'],
+                    $updatedUser["Full_Name"]
+                ];
                 $_SESSION['message'] = "Cập nhật thành công!";
             } else {
                 $_SESSION['error-message'] = "Có lỗi xảy ra!";
@@ -62,9 +72,9 @@ class User extends Controller
             "Page" => "user/profile",
             "Script" => ["auth/register"],
             "User" => $this->UserModel->getUserById($this->User_id),
-
         ]);
     }
+
     function favorite()
     {
 
@@ -117,7 +127,10 @@ class User extends Controller
         $this->view("main_layout", [
             "Title" => "Hồ sơ cá nhân",
             "Page" => "user/location",
-            "Script" => ["auth/register"],
+            "Script" => [
+                "auth/register",
+                "auth/login"
+            ],
             "Location" => $this->UserModel->getUserById($this->User_id),
         ]);
     }

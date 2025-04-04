@@ -257,6 +257,89 @@ class ProductModel extends DB
             return "error";
         }
     }
+    function bookHome()
+    {
+        $sql = "
+    SELECT 
+        b.Book_id, 
+        bd.Title, 
+        a.Name AS Author_Name, 
+        bd.Price, 
+        b.Date_added,
+        b.Category_id,
+        b.quantity,
+        b.Status_id,
+        bs.Status_name AS Status,
+        c.Category_name AS Category_name,
+        c.Category_type AS Category_type,
+        GROUP_CONCAT(DISTINCT bi.Image_URL) AS Images
+    FROM book b
+    INNER JOIN bookdetail bd ON b.Book_id = bd.id
+    INNER JOIN author a ON b.Author_id = a.Author_id
+    INNER JOIN category c ON b.Category_id = c.Category_id
+    LEFT JOIN bookstatus bs ON b.Status_id = bs.Status_id
+    LEFT JOIN bookimages bi ON bi.Book_id = b.Book_id
+    GROUP BY c.Category_name, b.Book_id
+    ORDER BY c.Category_name ASC, b.Date_added DESC;
+    ";
+
+        $result = $this->conn->query($sql);
+        $books = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['Images'] = $row['Images'] ? explode(",", $row['Images']) : [];
+            $books[] = $row;
+        }
+        return $books;
+    }
+    public function getBooksSeller($Seller_id)
+    {
+        // Cập nhật trạng thái sách hết hàng chỉ của người bán cụ thể
+        $updateSql = "UPDATE book SET Status_id = 2 WHERE quantity = 0 AND User_id = ?";
+        $stmt = $this->conn->prepare($updateSql);
+        $stmt->bind_param("i", $Seller_id);
+        $stmt->execute();
+
+        // Truy vấn danh sách sách của người bán
+        $sql = "
+    SELECT 
+        b.Book_id, 
+        bd.Title, 
+        a.Name AS Author_Name, 
+        bd.Description, 
+        bd.Price, 
+        b.Date_added,
+        b.Category_id,
+        b.quantity,
+        b.Status_id,
+        bs.Status_name AS Status,
+        c.Category_name AS Category_name,
+        c.Category_type AS Category_type,
+        (SELECT GROUP_CONCAT(bi.Image_URL SEPARATOR ',') 
+         FROM bookimages bi 
+         WHERE bi.Book_id = b.Book_id) AS Images
+    FROM book b
+    INNER JOIN bookdetail bd ON b.Book_id = bd.id
+    INNER JOIN author a ON b.Author_id = a.Author_id
+    INNER JOIN category c ON b.Category_id = c.Category_id
+    LEFT JOIN bookstatus bs ON b.Status_id = bs.Status_id
+    WHERE b.User_id = ?
+    ORDER BY b.Date_added DESC;
+    ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $Seller_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $books = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['Images'] = !empty($row['Images']) ? explode(",", $row['Images']) : [];
+            $books[] = $row;
+        }
+
+        return $books;
+    }
+
 
 }
 ?>

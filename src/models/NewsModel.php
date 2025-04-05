@@ -51,7 +51,25 @@ class NewsModel extends DB
 
         return $news;
     }
-    public function getNews()
+    function getNewsSeller($Seller_id)
+    {
+        // Thêm điều kiện lọc theo User_id (người bán)
+        $sql = "SELECT title, date, status, description, image_1 FROM news WHERE user_id = ? ORDER BY date DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $Seller_id); // Ràng buộc User_id là số nguyên
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $news = [];
+    
+        // Lấy dữ liệu từ kết quả truy vấn
+        while ($row = $result->fetch_assoc()) {
+            $news[] = $row;
+        }
+    
+        return $news;
+    }
+    
+    public function getNewsHome()
     {
         $sql = "SELECT title, date,  status, description, image_1, link
                 FROM news 

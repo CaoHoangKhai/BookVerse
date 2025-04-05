@@ -73,20 +73,10 @@
                                 <textarea class="form-control" name="content2" id="content2" rows="4"
                                     placeholder="Nhập nội dung phần tiếp theo"></textarea>
                             </div>
-                            <!-- Trạng thái -->
-                            <div class="col-md-12">
-                                <label class="form-label fs-6"><strong>Trạng thái</strong></label>
-                                <select class="form-select" name="status" id="status" required>
-                                    <option value="" disabled selected>-- Chọn trạng thái --</option>
-                                    <option value="1">Hiển thị</option>
-                                    <option value="2">Đã ẩn</option>
-                                </select>
-                                <div class="invalid-feedback">Vui lòng chọn trạng thái.</div>
-                            </div>
 
                             <div class="modal-footer d-flex justify-content-start">
                                 <button type="reset" class="btn btn-secondary me-2">Reset</button>
-                                <button type="submit" class="btn btn-primary" name="addNews" value="Thêm Tin Tức">
+                                <button type="submit" class="btn btn-primary" name="addSellerNew" value="Thêm Tin Tức">
                                     <input type="hidden" id="current_date" name="current_date"
                                         value="<?php echo date('Y-m-d'); ?>" readonly>
                                     Thêm Tin Tức

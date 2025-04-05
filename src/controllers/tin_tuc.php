@@ -12,7 +12,7 @@ class Tin_tuc extends Controller
         $this->view("single_layout", [
             "Title" => "Tin Tức",
             "Page" => "news/news",
-            "News" => $this->NewsModel->getNews(),
+            "News" => $this->NewsModel->getNewsHome(),
         ]);
     }
 
@@ -30,7 +30,7 @@ class Tin_tuc extends Controller
             "Title" => $news["title"],
             "Page" => "news/news_detail",
             "NewsDetail" => $news,
-            "NewsList" =>$this->NewsModel->getNews(),
+            "NewsList" =>$this->NewsModel->getNewsHome(),
             "NewsId" => $news["new_id"], // Truyền ID bài viết sang view
         ]);
     }

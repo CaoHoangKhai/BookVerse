@@ -251,6 +251,7 @@ class Seller extends Controller
         $this->view("main_layout", [
             "Title" => "Tin tức của tôi",
             "Page" => "seller/news/my_news",
+            "NewsSeller" =>$this->NewsModel->getNewsSeller($_SESSION['user_Info'][0]),
         ]);
     }
 
@@ -264,6 +265,65 @@ class Seller extends Controller
     }
     function add_new()
     {
+        if (isset($_POST['addSellerNew'])) {
+            $title = $_POST['title'];
+            $description = $_POST['description'];
+            $content1 = $_POST['content1'];
+            $content2 = !empty($_POST['content2']) ? $_POST['content2'] : ""; // Nếu trống
+            $current_date = $_POST['current_date'];
+            $status = 2;
+            $user_id = $_SESSION['user_Info'][0];
+
+            $targetDir = $_SERVER['DOCUMENT_ROOT'] . APP_PATH . "/public/media/photos/news/";
+
+            // Xử lý image1
+            $image1 = $_FILES['image1']['name'];
+            $targetFile1 = $targetDir . basename($image1);
+            $imageFileType1 = strtolower(pathinfo($targetFile1, PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+            if (!in_array($imageFileType1, $allowed)) {
+                $_SESSION['error-message'] = "Ảnh 1 không hợp lệ";
+                header("Location: " . APP_PATH . "/seller/add_new");
+                exit;
+            }
+            // Xử lý image2 (có thể trống)
+            $image2 = !empty($_FILES['image2']['name']) ? $_FILES['image2']['name'] : "";
+            if (!empty($image2)) {
+                $targetFile2 = $targetDir . basename($image2);
+                $imageFileType2 = strtolower(pathinfo($targetFile2, PATHINFO_EXTENSION));
+                if (!in_array($imageFileType2, $allowed)) {
+                    $_SESSION['error-message'] = "Ảnh 2 không hợp lệ";
+                    header("Location: " . APP_PATH . "/seller/add_new");
+                    exit;
+                }
+            }
+            move_uploaded_file($_FILES['image1']['tmp_name'], $targetFile1);
+            if (!empty($image2)) {
+                move_uploaded_file($_FILES['image2']['tmp_name'], $targetFile2);
+            }
+
+            // Gọi Model
+            $result = $this->NewsModel->createNews(
+                $user_id,
+                $title,
+                $description,
+                $image1,
+                $content1,
+                $image2,
+                $content2,
+                $current_date,
+                $status
+            );
+            if ($result) {
+                $_SESSION['message'] = "Thêm tin tức thành công";
+                header("Location: " . APP_PATH . "/seller/add_new");
+                exit;
+            } else {
+                $_SESSION['error-message'] = "Lỗi khi thêm tin tức";
+                header("Location: " . APP_PATH . "/seller/add_new");
+            }
+        }
         $this->CheckModel->checkSellerPermission();
         $this->view("main_layout", [
             "Title" => "Thêm tin tức",

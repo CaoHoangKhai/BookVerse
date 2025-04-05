@@ -15,7 +15,7 @@ class Home extends Controller
             "Title" => "Trang Chủ - Sách",
             "Page" => "home/home",
             "BookHome" => $this->ProductModel->bookHome(),
-            "NewsHome" => $this->NewsModel->getNews(),
+            "NewsHome" => $this->NewsModel->getNewsHome(),
         ]);
     }
 }

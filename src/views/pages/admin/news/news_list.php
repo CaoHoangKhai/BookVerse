@@ -5,9 +5,18 @@
             Tất cả
         </button>
         <ul class="dropdown-menu" style="max-height: 400px; overflow-y: auto; font-size: 18px;">
-            <li><button class="dropdown-item category-filter" type="button" data-action="none">Tất cả</button></li>
-            <li><button class="dropdown-item category-filter" type="button" data-action="hide">Ẩn</button></li>
-            <li><button class="dropdown-item category-filter" type="button" data-action="show">Hiển thị</button></li>
+            <li>
+                <button class="dropdown-item category-filter" type="button" data-action="none">Tất cả</button>
+            </li>
+            <li>
+                <button class="dropdown-item category-filter" type="button" data-action="pending">Chờ duyệt</button>
+            </li>
+            <li>
+                <button class="dropdown-item category-filter" type="button" data-action="hide">Ẩn</button>
+            </li>
+            <li>
+                <button class="dropdown-item category-filter" type="button" data-action="show">Hiển thị</button>
+            </li>
         </ul>
     </div>
     <input type="text" id="searchBook" class="form-control me-2" placeholder="Tìm kiếm sách...">
@@ -40,7 +49,13 @@
                 <td><?= $news["date"] ?></td>
                 <td>
                     <?php
-                    echo ($news["status"] == 1) ? "<span class='badge bg-success'>Hiển thị</span>" : "<span class='badge bg-secondary'>Ẩn</span>";
+                    if ($news["status"] == 1) {
+                        echo "<span class='badge bg-success'>Hiển thị</span>";
+                    } elseif ($news["status"] == 0) {
+                        echo "<span class='badge bg-secondary'>Ẩn</span>";
+                    } elseif ($news["status"] == 2) {
+                        echo "<span class='badge bg-warning text-dark'>Chờ duyệt</span>";
+                    }
                     ?>
                 </td>
                 <td><?= $news["description"] ?></td>

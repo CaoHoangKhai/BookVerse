@@ -814,6 +814,7 @@ class Admin extends Controller
     }
     function news_list()
     {
+        $this->CheckModel->checkAdminPermission();
         $this->view("main_layout", [
             "Title" => "Danh sách Tin Tức",
             "Page" => "admin/news/news_list",
@@ -888,6 +889,7 @@ class Admin extends Controller
         }
 
         // Gọi view
+        $this->CheckModel->checkAdminPermission();
         $this->view("main_layout", [
             "Title" => "Thêm Tin Tức",
             "Page" => "admin/news/add_news",

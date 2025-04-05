@@ -19,9 +19,11 @@ document.querySelectorAll(".category-filter").forEach(button => {
             let title = row.querySelector("td:nth-child(2)").innerText.toLowerCase(); // Lấy tiêu đề
             let statusBadge = row.querySelector("td:nth-child(4) span"); // Cột trạng thái
             let matchesSearch = title.includes(searchValue); // Kiểm tra tiêu đề có chứa từ khóa không
-            let matchesFilter = 
-                (action === "hide" && statusBadge.classList.contains("bg-secondary")) || // Ẩn: Chỉ hiện bài bị ẩn
-                (action === "show" && statusBadge.classList.contains("bg-success")) || // Hiển thị: Chỉ hiện bài hiển thị
+
+            let matchesFilter =
+                (action === "hide" && statusBadge.classList.contains("bg-secondary")) || // Ẩn
+                (action === "show" && statusBadge.classList.contains("bg-success")) ||   // Hiển thị
+                (action === "pending" && statusBadge.classList.contains("bg-warning")) || // Chờ duyệt
                 (action === "none"); // Tất cả
 
             if (matchesSearch && matchesFilter) {

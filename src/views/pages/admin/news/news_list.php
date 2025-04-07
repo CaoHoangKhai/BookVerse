@@ -28,14 +28,15 @@
 </div>
 
 
-<table class="table table-bordered">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>STT</th>
-            <th>Tiêu đề</th>
-            <th>Ngày đăng</th>
-            <th>Trạng thái</th>
-            <th>Mô tả</th>
+            <th scope="col" class="col">STT</th>
+            <th scope="col" class="col">Tiêu đề</th>
+            <th scope="col" class="col">Ngày đăng</th>
+            <th scope="col" class="col">Trạng thái</th>
+            <th scope="col" class="col">Mô tả</th>
+            <th scope="col" class="col">Chỉnh sửa</th>
         </tr>
     </thead>
     <tbody>
@@ -45,7 +46,19 @@
             ?>
             <tr>
                 <td><?= $i++ ?></td>
-                <td><?= $news["title"] ?></td>
+                <td>
+                    <?php
+                    $bio = htmlspecialchars_decode($news["title"]); // Chuyển HTML Entities thành ký tự thường
+                
+                    $maxLength = 30;
+                    if (mb_strlen($bio, 'UTF-8') > $maxLength) {
+                        $shortBio = mb_substr($bio, 0, mb_strrpos(mb_substr($bio, 0, $maxLength, 'UTF-8'), ' '), 'UTF-8') . '...';
+                    } else {
+                        $shortBio = $bio;
+                    }
+                    echo $shortBio;
+                    ?>
+                </td>
                 <td><?= $news["date"] ?></td>
                 <td>
                     <?php
@@ -58,7 +71,27 @@
                     }
                     ?>
                 </td>
-                <td><?= $news["description"] ?></td>
+                <td>
+                    <?php
+                    $bio = htmlspecialchars_decode($news["description"]); // Chuyển HTML Entities thành ký tự thường
+                
+                    $maxLength = 50;
+                    if (mb_strlen($bio, 'UTF-8') > $maxLength) {
+                        $shortBio = mb_substr($bio, 0, mb_strrpos(mb_substr($bio, 0, $maxLength, 'UTF-8'), ' '), 'UTF-8') . '...';
+                    } else {
+                        $shortBio = $bio;
+                    }
+                    echo $shortBio;
+                    ?>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                        <a href="<?= APP_PATH ?>/admin/new_detail/<?= $news["new_id"]; ?>"
+                            class="btn btn-primary d-flex justify-content-center align-items-center">
+                            <i class="fa fa-pencil me-2"></i> Chỉnh sửa
+                        </a>
+                    </div>
+                </td>
             </tr>
         <?php endforeach; ?>
     </tbody>

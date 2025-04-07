@@ -11,18 +11,18 @@
     <div class="row g-4">
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_1.png") ?>" class="img-fluid mb-2">
-            <p>Để đóng góp ý kiến:<br><strong>feedback@bookswaphub.com</strong></p>
+            <p>Để đóng góp ý kiến:<br><strong>feedback@bookverse.com</strong></p>
         </div>
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_2.png") ?>" class="img-fluid mb-2">
             <p>Để gửi tác phẩm hoặc trở thành cộng tác viên thiết kế / minh họa của chúng tôi:<br>
-                <strong>submissions@bookswaphub.com</strong>
+                <strong>submissions@bookverse.com</strong>
             </p>
         </div>
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_3.png") ?>" class="img-fluid mb-2">
             <p>Để trở thành đại lý phát hành của chúng tôi hoặc đặt mua với số lượng lớn:<br>
-                <strong>partners@bookswaphub.com</strong>
+                <strong>partners@bookverse.com</strong>
             </p>
         </div>
     </div>
@@ -31,19 +31,19 @@
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_4.png") ?>" class="img-fluid mb-2">
             <p>Để giao dịch tác quyền hoặc các vấn đề liên quan đến dịch thuật:<br>
-                <strong>copyright@bookswaphub.com</strong>
+                <strong>copyright@bookverse.com</strong>
             </p>
         </div>
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_5.png") ?>" class="img-fluid mb-2">
             <p>Để liên hệ với bộ phận truyền thông của chúng tôi:<br>
-                <strong>media@bookswaphub.com</strong>
+                <strong>media@bookverse.com</strong>
             </p>
         </div>
         <div class="col-md-4">
             <img src="<?= $this->image_contact("contact_6.png") ?>" class="img-fluid mb-2">
             <p>Để liên hệ với Chi nhánh Nhà xuất bản Trẻ tại Hà Nội:<br>
-                <strong>branch.hanoi@bookswaphub.com</strong>
+                <strong>branch.hanoi@bookverse.com</strong>
             </p>
         </div>
     </div>

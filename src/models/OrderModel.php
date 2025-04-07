@@ -145,5 +145,94 @@ class OrderModel extends DB
         $stmt = $this->conn->prepare("UPDATE `order` SET Status = ? WHERE Order_id = ?");
         return $stmt->execute([$Status_id, $Order_id]);
     }
+
+    public function createOrder($user_id, $full_Name, $phone_Number, $email, $address, $note, $pay, $sum, $order_date, $order_code)
+    {
+        $this->conn->begin_transaction();
+        try {
+            $sql = "INSERT INTO `order`(`User_id`, `Full_Name`, `Phone_Number`, `Email`, `Address`, `Note`, `PaymentMethod_id`, `Sum`, `Order_date`, `Item_code`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("issssssdss", $user_id, $full_Name, $phone_Number, $email, $address, $note, $pay, $sum, $order_date, $order_code);
+
+            if (!$stmt->execute()) {
+                throw new Exception("Lỗi khi thêm đơn hàng: " . $stmt->error);
+            }
+            $order_id = $this->conn->insert_id;
+            $stmt->close();
+
+            $cartQuery = "
+        SELECT c.Book_id, c.Quantity, bd.Price, b.Status_id, b.quantity AS Stock
+        FROM cart c
+        JOIN bookdetail bd ON bd.id = c.Book_id
+        JOIN book b ON b.Book_id = c.Book_id
+        WHERE c.User_id = ?";
+            $stmt = $this->conn->prepare($cartQuery);
+            $stmt->bind_param("i", $user_id);
+            $stmt->execute();
+            $cartItems = $stmt->get_result();
+            $stmt->close();
+
+            if ($cartItems->num_rows == 0) {
+                throw new Exception("Giỏ hàng trống.");
+            }
+
+            $validBooks = [];
+            while ($item = $cartItems->fetch_assoc()) {
+                if ($item['Status_id'] == 1) {
+                    if ($item['Quantity'] > $item['Stock']) {
+                        throw new Exception("Sách ID " . $item['Book_id'] . " không đủ hàng.");
+                    }
+                    $validBooks[] = $item;
+                }
+            }
+
+            if (empty($validBooks)) {
+                throw new Exception("Không có sách hợp lệ để đặt hàng.");
+            }
+
+            $orderDetailQuery = "INSERT INTO orderdetail (Order_id, Book_id, Quantity, Price) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($orderDetailQuery);
+            foreach ($validBooks as $item) {
+                $stmt->bind_param("iiid", $order_id, $item['Book_id'], $item['Quantity'], $item['Price']);
+                if (!$stmt->execute()) {
+                    throw new Exception("Lỗi khi thêm vào order_detail: " . $stmt->error);
+                }
+            }
+            $stmt->close();
+
+            $updateStockQuery = "UPDATE book SET quantity = quantity - ? WHERE Book_id = ?";
+            $stmt = $this->conn->prepare($updateStockQuery);
+            foreach ($validBooks as $item) {
+                $stmt->bind_param("ii", $item['Quantity'], $item['Book_id']);
+                if (!$stmt->execute()) {
+                    throw new Exception("Lỗi khi cập nhật số lượng sách ID " . $item['Book_id']);
+                }
+            }
+            $stmt->close();
+
+            // Thêm điều kiện Status_id = 1 vào câu lệnh xóa sách khỏi giỏ hàng
+            $deleteCartQuery = "DELETE FROM cart WHERE User_id = ? AND Book_id = ? AND Book_id IN (SELECT Book_id FROM book WHERE Status_id = 1)";
+            $stmt = $this->conn->prepare($deleteCartQuery);
+            foreach ($validBooks as $item) {
+                $stmt->bind_param("ii", $user_id, $item['Book_id']);
+                if (!$stmt->execute()) {
+                    throw new Exception("Lỗi khi xóa sách ID " . $item['Book_id'] . " khỏi giỏ hàng.");
+                }
+            }
+            $stmt->close();
+            $this->conn->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return "Lỗi: " . $e->getMessage();
+        }
+    }
+    function updatePaymentStatusById($order_id)
+    {
+        $stmt = $this->conn->prepare("UPDATE `order` SET Payment_Status = 1 WHERE Order_id = ?");
+        return $stmt->execute([$order_id]);
+    }
 }
 ?>

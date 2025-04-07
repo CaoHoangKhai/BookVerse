@@ -25,13 +25,13 @@
     <thead>
         <tr>
             <th scope="col" class="col">ID</th>
-            <th scope="col" class="col text-center">Mã đơn hàng</th>
+            <th scope="col" class="col-2 text-center">Mã đơn hàng</th>
             <th scope="col" class="col-5 text-center">Địa chỉ</th>
             <th scope="col" class="col text-center">Trạng thái</th>
             <th scope="col" class="col-3 text-center">Hình thức thanh toán</th>
             <th scope="col" class="col-2 text-center">Tổng tiền</th>
             <th scope="col" class="col-1 text-center">Ngày đặt</th>
-            <th scope="col" class="col text-center">Chỉnh sửa</th>
+            <th scope="col" class="col-1 text-center">Chỉnh sửa</th>
         </tr>
     </thead>
     <tbody id="bookTable">
@@ -73,9 +73,9 @@
                             class="btn btn-primary me-2" style="width: 40px; height: 40px;">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <button class="btn btn-danger me-2" style="width: 40px; height: 40px;">
+                        <!-- <button class="btn btn-danger me-2" style="width: 40px; height: 40px;">
                             <i class="fa fa-trash"></i>
-                        </button>
+                        </button> -->
                     </div>
                 </td>
             </tr>

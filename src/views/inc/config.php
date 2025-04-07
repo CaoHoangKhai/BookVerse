@@ -154,6 +154,16 @@ $seller_links = [
 // 🚀 Danh sách liên kết cho Admin (Quản trị viên)
 $admin_links = [
     [
+        'label_parent' => 'Bảng Điều Khiển',
+        'children' => [
+            [
+                'icon' => 'fas fa-tachometer-alt',
+                'label' => 'Thống kê tổng quan',
+                'url' => APP_PATH . '/admin/dashboard',
+            ],
+        ]
+    ],
+    [
         'label_parent' => 'Người Dùng',
         'children' => [
             [

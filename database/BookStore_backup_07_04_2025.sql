@@ -77,7 +77,7 @@ CREATE TABLE `book` (
 
 LOCK TABLES `book` WRITE;
 /*!40000 ALTER TABLE `book` DISABLE KEYS */;
-INSERT INTO `book` VALUES (27,141,3,9,14,'2025-02-21',1),(28,141,4,3,0,'2025-02-25',2),(29,141,2,9,0,'2025-02-25',2),(30,141,2,23,3,'2025-03-06',1),(31,141,2,2,0,'2025-03-06',2),(32,141,28,16,0,'2025-03-08',2),(34,141,3,9,0,'2025-03-08',2),(35,141,3,9,0,'2025-03-08',2),(36,141,3,9,4,'2025-03-08',2),(37,141,3,9,0,'2025-03-08',2),(38,141,3,9,0,'2025-03-08',2),(39,141,7,3,0,'2025-03-08',2),(46,169,9,12,6,'2025-03-31',1);
+INSERT INTO `book` VALUES (27,141,3,9,13,'2025-02-21',1),(28,141,4,3,0,'2025-02-25',2),(29,141,2,9,0,'2025-02-25',2),(30,141,2,23,3,'2025-03-06',1),(31,141,2,2,0,'2025-03-06',2),(32,141,28,16,0,'2025-03-08',2),(34,141,3,9,0,'2025-03-08',2),(35,141,3,9,0,'2025-03-08',2),(36,141,3,9,4,'2025-03-08',2),(37,141,3,9,0,'2025-03-08',2),(38,141,3,9,0,'2025-03-08',2),(39,141,7,3,0,'2025-03-08',2),(46,169,9,12,6,'2025-03-31',1);
 /*!40000 ALTER TABLE `book` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,7 @@ CREATE TABLE `cart` (
   KEY `Book_id` (`Book_id`),
   CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`User_id`) REFERENCES `user` (`User_id`),
   CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`Book_id`) REFERENCES `book` (`Book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +254,7 @@ CREATE TABLE `favourite` (
   KEY `Book_id` (`Book_id`),
   CONSTRAINT `favourite_ibfk_1` FOREIGN KEY (`User_id`) REFERENCES `user` (`User_id`),
   CONSTRAINT `favourite_ibfk_2` FOREIGN KEY (`Book_id`) REFERENCES `book` (`Book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -263,7 +263,7 @@ CREATE TABLE `favourite` (
 
 LOCK TABLES `favourite` WRITE;
 /*!40000 ALTER TABLE `favourite` DISABLE KEYS */;
-INSERT INTO `favourite` VALUES (10,142,30),(11,142,27),(12,142,29),(14,141,34),(16,14,38),(18,14,27);
+INSERT INTO `favourite` VALUES (10,142,30),(11,142,27),(12,142,29),(14,141,34),(16,14,38),(21,14,35),(22,14,27);
 /*!40000 ALTER TABLE `favourite` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -332,7 +332,7 @@ CREATE TABLE `order` (
   CONSTRAINT `FK_PaymentMethod` FOREIGN KEY (`PaymentMethod_id`) REFERENCES `paymentmethods` (`PaymentMethod_id`),
   CONSTRAINT `fk_order_userlocation` FOREIGN KEY (`Address`) REFERENCES `userlocation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_user_id` FOREIGN KEY (`User_id`) REFERENCES `user` (`User_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -341,7 +341,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',2,4,450000.00,'2025-04-05','BOOK-BE2AD485',0),(2,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',1,3,1320000.00,'2025-04-05','BOOK-2FCF41ED',0),(3,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',1,3,1020000.00,'2025-04-05','BOOK-3A5AE344',0);
+INSERT INTO `order` VALUES (1,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',4,4,450000.00,'2025-04-05','BOOK-BE2AD485',0),(2,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',4,3,1320000.00,'2025-04-05','BOOK-2FCF41ED',1),(3,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',4,3,1020000.00,'2025-04-05','BOOK-3A5AE344',1),(4,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com',17,'',1,3,135000.00,'2025-04-07','BOOK-ABA421C8',0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -363,7 +363,7 @@ CREATE TABLE `orderdetail` (
   KEY `Book_id` (`Book_id`),
   CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`Order_id`) REFERENCES `order` (`Order_id`),
   CONSTRAINT `orderdetail_ibfk_2` FOREIGN KEY (`Book_id`) REFERENCES `book` (`Book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -372,7 +372,7 @@ CREATE TABLE `orderdetail` (
 
 LOCK TABLES `orderdetail` WRITE;
 /*!40000 ALTER TABLE `orderdetail` DISABLE KEYS */;
-INSERT INTO `orderdetail` VALUES (1,1,30,2,225000.00),(2,2,38,1,150000.00),(3,2,34,1,1020000.00),(4,3,34,1,1020000.00);
+INSERT INTO `orderdetail` VALUES (1,1,30,2,225000.00),(2,2,38,1,150000.00),(3,2,34,1,1020000.00),(4,3,34,1,1020000.00),(5,4,27,1,135000.00);
 /*!40000 ALTER TABLE `orderdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -576,4 +576,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-05 21:53:16
+-- Dump completed on 2025-04-07 16:12:45

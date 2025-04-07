@@ -31,6 +31,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="<?= APP_PATH ?>/public/tinymce/tinymce.min.js"></script>
 </head>

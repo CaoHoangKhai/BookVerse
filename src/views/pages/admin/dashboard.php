@@ -1,3 +1,7 @@
+<?php
+// print_r($data["getTotalRevenueByDate"]);
+print_r($data["OrderPercentage"]);
+?>
 <div class="container">
     <div class="row mt-1">
         <!-- Khối Khách Hàng -->
@@ -17,8 +21,7 @@
 
         <!-- Khối Sản Phẩm -->
         <div class="col-3">
-            <a class="link-offset-2 link-underline link-underline-opacity-0"
-                href="<?= APP_PATH ?>/admin/products_list">
+            <a class="link-offset-2 link-underline link-underline-opacity-0" href="<?= APP_PATH ?>/admin/products_list">
                 <div class="p-3 border bg-success d-flex justify-content-between align-items-center rounded">
                     <div class="text-left text-white fs-5">
                         <div class="text-left text-white fs-3"><?php echo $data["CountBook"]; ?></div>
@@ -66,17 +69,116 @@
     </div>
 
     <div class="row mt-3">
+        <?php
+        // Dữ liệu doanh thu đã được lấy từ database
+        $revenues = $data["getTotalRevenueByDate"];
+
+        // Xử lý và loại bỏ "VND" và các ký tự không phải số trong `total_revenue`
+        foreach ($revenues as &$revenue) {
+            $revenue['total_revenue'] = (float) str_replace(['.', ' VND'], '', $revenue['total_revenue']);
+
+            // Lấy chỉ ngày và tháng từ Order_date
+            $revenue['Order_date'] = date('d-m', strtotime($revenue['Order_date']));
+        }
+
+        // Sắp xếp mảng theo ngày giảm dần (Order_date)
+        usort($revenues, function ($a, $b) {
+            return strtotime($b['Order_date']) - strtotime($a['Order_date']);
+        });
+
+        // Tính tổng doanh thu
+        $total_revenue = array_sum(array_column($revenues, 'total_revenue'));
+        ?>
+
         <div class="col-md-8">
             <div class="border border-2 p-3 mb-3">
                 <h5>Biểu đồ doanh thu theo tháng</h5>
+                <canvas id="revenueChart"></canvas>
+
+                <!-- Hiển thị tổng doanh thu -->
+                <div class="mt-3">
+                    <h6>Tổng doanh thu: <?php echo number_format($total_revenue, 0, ',', '.') . ' VND'; ?></h6>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    // Dữ liệu doanh thu được lấy từ PHP
+                    const revenues = <?php echo json_encode($revenues); ?>;
+
+                    if (revenues.length === 0) {
+                        alert("Không có dữ liệu doanh thu.");
+                    } else {
+                        // Lấy các ngày và doanh thu từ mảng PHP
+                        const labels = revenues.map(revenue => revenue['Order_date']);
+                        const data = revenues.map(revenue => revenue['total_revenue']); // Đã được xử lý ở phía PHP
+
+                        // Tạo biểu đồ đường
+                        const ctx = document.getElementById('revenueChart').getContext('2d');
+                        const revenueChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,  // Các ngày (ngày mới nhất sẽ ở cuối)
+                                datasets: [{
+                                    label: 'Doanh thu',
+                                    data: data,  // Doanh thu
+                                    fill: false,
+                                    borderColor: 'rgb(75, 192, 192)',
+                                    tension: 0.1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Ngày'
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Doanh thu (VND)'
+                                        },
+                                        ticks: {
+                                            callback: function (value) {
+                                                return value.toLocaleString(); // Định dạng với dấu phân cách nghìn
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: true, // Hiển thị legend
+                                        position: 'top'
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </script>
             </div>
         </div>
+
+        <?php
+        // Lấy tổng số đơn hàng
+        $totalOrders = 0;
+        foreach ($data["OrderPercentage"] as $status) {
+            $totalOrders += $status['Total_orders'];
+        }
+
+        // Tính phần trăm cho mỗi trạng thái
+        $orderPercentages = [];
+        foreach ($data["OrderPercentage"] as $status) {
+            $percentage = ($totalOrders > 0) ? ($status['Total_orders'] / $totalOrders) * 100 : 0;
+            $orderPercentages[$status['Status_id']] = round($percentage, 2); // Làm tròn phần trăm
+        }
+        ?>
+
         <div class="col-md-4">
             <div class="border border-2 p-3 mb-3">
                 <h5>Thống kê trạng thái đơn hàng</h5>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-                <?php if (!empty($data["OrderPercentage"])): ?>
+                <?php if (!empty($orderPercentages)): ?>
                     <canvas id="orderChart"></canvas>
 
                     <style>
@@ -102,7 +204,8 @@
                             7 => "Vận chuyển thất bại",
                             8 => "Đang chờ xác nhận (Hủy)"
                         ];
-                        foreach ($data["OrderPercentage"] as $status => $percent):
+
+                        foreach ($orderPercentages as $status => $percent):
                             $label = isset($statusLabels[$status]) ? $statusLabels[$status] : "Không xác định";
                             ?>
                             labels.push("<?php echo $label; ?>");
@@ -149,22 +252,18 @@
             </div>
         </div>
 
+
         <div class="col-md-8">
             <div class="border border-2 p-3 mb-3">
                 <h5>Danh sách đơn hàng đang chờ xác nhận</h5>
                 <?php
-                $orders = array_filter($data["Orders"], function ($order) {
-                    return $order['Order_Status'] == 1;
-                });
-
-                if (!empty($orders)):
+                if (!empty($data["NewOrder"])):
                     ?>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>Mã đơn</th>
                                 <th>Người đặt</th>
-                                <th>Trạng thái</th>
                                 <th>Ngày đặt</th>
                                 <th>Tổng tiền</th>
                                 <th>Xem chi tiết</th>
@@ -172,12 +271,11 @@
                         </thead>
                         <tbody>
                             <?php
-                            foreach (array_slice($orders, 0, 5) as $order):
+                            foreach (array_slice($data["NewOrder"], 0, 5) as $order):
                                 ?>
                                 <tr>
                                     <td><?php echo $order['Item_code']; ?></td>
-                                    <td><?php echo $order['Order_Name']; ?></td>
-                                    <td><?php echo $order['Status_Name']; ?></td>
+                                    <td><?php echo $order['Full_Name']; ?></td>
                                     <td><?php echo !empty($order['Order_date']) ? date("d/m/Y", strtotime($order['Order_date'])) : 'Không có dữ liệu'; ?>
                                     </td>
                                     <td><?php echo number_format($order['Sum'], 0, ',', '.'); ?> đ</td>

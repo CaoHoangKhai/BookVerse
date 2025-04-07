@@ -40,5 +40,24 @@ class CommonModel extends DB
         }
         return $countries;
     }
+    public function getPaymentMethods()
+    {
+        $sql = "SELECT PaymentMethod_id, PaymentMethod_name FROM paymentmethods";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            die("Lỗi prepare: " . $this->conn->error);
+        }
+        if (!$stmt->execute()) {
+            die("Lỗi execute: " . $stmt->error);
+        }
+        $result = $stmt->get_result();
+        $methods = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $methods[] = $row;
+        }
+        $stmt->close();
+        return $methods;
+    }
 }
 ?>

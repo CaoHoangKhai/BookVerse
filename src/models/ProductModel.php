@@ -339,6 +339,35 @@ class ProductModel extends DB
 
         return $books;
     }
+    public function isBookAvailable($bookId)
+    {
+        $sql = "SELECT Status_id FROM book WHERE Book_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $bookId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            $statusMapping = [
+                2 => "Sách đã hết hàng.",
+                3 => "Sách đã ngừng kinh doanh.",
+                4 => "Sách đang chờ cập nhật.",
+            ];
+            return $statusMapping[$row['Status_id']] ?? true; // Nếu không có trong mapping thì sách có sẵn
+        }
+
+        return "Không tìm thấy sách.";
+    }
+    public function getBookStock($Book_id)
+    {
+        $query = "SELECT quantity FROM book WHERE Book_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $Book_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['quantity'] : 0;
+    }
 
 
 }

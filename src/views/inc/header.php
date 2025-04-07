@@ -7,7 +7,7 @@
 </div>
 
 
-<header class="bg-body-tertiary">
+<header>
     <nav class="navbar navbar-expand-lg">
         <div class="container container-fluid">
             <div class="collapse navbar-collapse row w-100" id="navbarSupportedContent">
@@ -21,11 +21,11 @@
 
                 <!-- Cột giữa với form tìm kiếm -->
                 <div class="col-6">
-                    <form class="d-flex align-items-center" action="#" method="POST">
+                    <form class="d-flex align-items-center" action="/BookVerse/home" method="GET">
                         <input class="form-control me-2" type="search" placeholder="Search" name="search_name"
                             id="search_name">
-                        <button class="btn btn-outline-success" type="submit" name="search">Search</button>
-                        <a class="btn btn-outline-success ms-2"> <!-- Thêm me-2 để tạo khoảng cách -->
+                        <button class="btn btn-outline-success" type="submit" name="search" value="Tìm kiếm">Search</button>
+                        <a class="btn btn-outline-success ms-2">
                             <i class="fa fa-camera" aria-hidden="true"></i>
                         </a>
                     </form>
@@ -37,8 +37,6 @@
                         data-bs-placement="left" data-bs-content="Left popover">
                         <i class="fa fa-bell" aria-hidden="true"></i>
                     </a>
-
-
                     <!-- <a href="<?= APP_PATH ?>/auth/cart" class="btn btn-outline-success">
                         <i class="fas fa-shopping-cart"></i>
                     </a> -->
@@ -57,16 +55,14 @@
                             echo "<a href='" . APP_PATH . "/seller/dashboard' class='btn btn-outline-success'><i class='fas fa-book'></i></a>";
                         } elseif ($userInfo[2] == 2) {
                             // Admin
+                            echo "<a href='" . APP_PATH . "//auth/cart' class='btn btn-outline-success'><i class='fas fa-shopping-cart'></i></a>";
                             echo "<a href='" . APP_PATH . "/admin/dashboard' class='btn btn-outline-success'><i class='fas fa-user-shield'></i></a>";
                         }
                     } else {
                         // Nếu người dùng chưa đăng nhập
                         echo "<a href='" . APP_PATH . "/auth/login' class='btn btn-outline-success'><i class='fas fa-user'></i></a>";
                     }
-
                     ?>
-
-
                 </div>
             </div>
         </div>

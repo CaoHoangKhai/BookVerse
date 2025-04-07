@@ -7,7 +7,7 @@ class Admin extends Controller
     private $AuthModel;
     private $CheckModel;
     private $CommonModel;
-    private $DashboardModel;
+    private $DashboardAdmin;
     private $ProductModel;
     private $CategoryModel;
     private $AuthorModel;
@@ -20,7 +20,7 @@ class Admin extends Controller
         $this->CommonModel = $this->model("CommonModel");
         $this->AuthModel = $this->model("AuthModel");
         $this->CheckModel = $this->model("CheckRole");
-        $this->DashboardModel = $this->model("DashboardModel");
+        $this->DashboardAdmin = $this->model("DashboardAdmin");
         $this->ProductModel = $this->model("ProductModel");
         $this->CategoryModel = $this->model("CategoryModel");
         $this->AuthorModel = $this->model("AuthorModel");
@@ -33,10 +33,14 @@ class Admin extends Controller
         $this->view("main_layout", [
             "Title" => "Trang Tổng Quan",
             "Page" => "admin/dashboard",
-            "CountUser" => $this->DashboardModel->getCountsUser(),
-            "CountBook" => $this->DashboardModel->getCountsBook(),
-            "SumOrder" => $this->DashboardModel->getTotalRevenue(),
-            "CountOrder" => $this->DashboardModel->getCountOrder(),
+            "CountUser" => $this->DashboardAdmin->getCountsUser(),
+            "CountBook" => $this->DashboardAdmin->getCountsBook(),
+            "SumOrder" => $this->DashboardAdmin->getTotalRevenue(),
+            "CountOrder" => $this->DashboardAdmin->getCountOrder(),
+            "NewOrder" => $this->DashboardAdmin->getNewOrderAdmin(),
+            "BestSell" => $this->DashboardAdmin->getBestSellingBooks(),
+            "getTotalRevenueByDate" => $this->DashboardAdmin->getTotalRevenueByDate(),
+            "OrderPercentage" => $this->DashboardAdmin->getOrderStatusStatistics(),
         ]);
     }
     function users_list()
@@ -897,6 +901,16 @@ class Admin extends Controller
         ]);
     }
 
+    function new_detail($New_id)
+    {
+        $this->CheckModel->checkAdminPermission();
+        $this->view("main_layout", [
+            "Title" => "Danh sách Tin Tức",
+            "Page" => "admin/news/new_detail",
+            "Script" => ["news/news_list"],
+            "NewById" => $this->NewsModel->getNewByAdminId($New_id),
+        ]);
+    }
 
 }
 ?>

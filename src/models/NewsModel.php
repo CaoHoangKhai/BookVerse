@@ -39,7 +39,7 @@ class NewsModel extends DB
 
     public function getNewsAdmin()
     {
-        $sql = "SELECT title, date, status, description, image_1 FROM news ORDER BY date DESC";
+        $sql = "SELECT new_id,title, date, status, description, image_1 FROM news ORDER BY date DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -60,15 +60,15 @@ class NewsModel extends DB
         $stmt->execute();
         $result = $stmt->get_result();
         $news = [];
-    
+
         // Lấy dữ liệu từ kết quả truy vấn
         while ($row = $result->fetch_assoc()) {
             $news[] = $row;
         }
-    
+
         return $news;
     }
-    
+
     public function getNewsHome()
     {
         $sql = "SELECT title, date,  status, description, image_1, link
@@ -94,6 +94,21 @@ class NewsModel extends DB
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+    function getNewByAdminId($New_id)
+    {
+
+        $sql = "SELECT * FROM news WHERE New_id = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$New_id]);
+        
+        $result = $stmt->get_result();
+        
+        return $result->fetch_assoc();
+    }
+    
+    
 
 }
 ?>

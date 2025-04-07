@@ -3,11 +3,21 @@ class Auth extends Controller
 {
     private $CheckRole;
     private $AuthModel;
+    private $ProductModel;
+    private $CartModel;
+    private $UserModel;
+    private $OrderModel;
+    private $CommonModel;
 
     public function __construct()
     {
         $this->CheckRole = $this->model("CheckRole");
         $this->AuthModel = $this->model("AuthModel");
+        $this->ProductModel = $this->model("ProductModel");
+        $this->CartModel = $this->model("CartModel");
+        $this->UserModel = $this->model("UserModel");
+        $this->OrderModel = $this->model("OrderModel");
+        $this->CommonModel = $this->model("CommonModel");
         parent::__construct();
     }
     function login()
@@ -99,6 +109,106 @@ class Auth extends Controller
         header("Location: " . APP_PATH . "/auth/login");
         exit();
     }
+    public function cart()
+    {
+        if (!isset($_SESSION['user_Info'][0])) {
+            $_SESSION['error-message'] = "Bạn cần đăng nhập để xem giỏ hàng!";
+            header("Location: " . APP_PATH . "/auth/login");
+            exit();
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCartBook'])) {
+            $User_id = $_POST["User_id"];
+            $Book_id = $_POST["book_id"];
+
+            if ($this->CartModel->deleteCartBook($User_id, $Book_id)) {
+                $_SESSION['message'] = "Sản phẩm đã được xóa khỏi giỏ hàng!";
+            } else {
+                $_SESSION['error-message'] = "Có lỗi xảy ra, vui lòng thử lại!";
+            }
+            header("Location: " . APP_PATH . "/auth/cart");
+            exit();
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reduceQuantityBook'])) {
+
+            $Book_id = $_POST["Book_id"];
+            $User_id = $_SESSION['user_Info'][0];
+            $this->CartModel->reduceQuantityBook($User_id, $Book_id);
+            $_SESSION['message'] = "Cập nhật sản phẩm thành công";
+            header("Location: " . APP_PATH . "/auth/cart");
+            exit();
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addQuantityBook'])) {
+            $Book_id = $_POST["Book_id"];
+            $User_id = $_SESSION['user_Info'][0];
+            $message = $this->CartModel->addQuantityBook($User_id, $Book_id);
+            if ($message === "Đã tăng số lượng sách trong giỏ hàng." || $message === "Sách đã được thêm vào giỏ hàng.") {
+                $_SESSION['message'] = $message;
+            } else {
+                $_SESSION['error-message'] = $message;
+            }
+            header("Location: " . APP_PATH . "/auth/cart");
+            exit();
+        }
+        $getCart = $this->CartModel->getCartUser($_SESSION['user_Info'][0]);
+
+        $this->view("single_layout", [
+            "Title" => "Giỏ hàng",
+            "Page" => "cart/cart",
+            "Script" => "pages/cart",
+            "Cart" => $getCart,
+        ]);
+    }
+
+    public function order()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_detail'])) {
+            $user_id = $_SESSION["user_Info"][0];
+            $full_Name = $_POST["username"];
+            $phone_Number = $_POST["phonenumber"];
+            $email = $_POST["email"];
+            $address = $_POST["address"];
+            $note = $_POST["note"];
+            $pay = (int) $_POST["payment_method"];
+            $sum = $_POST["sum"];
+            $order_date = $_POST["order_date"];
+            $valid_payments = [2, 3, 4, 5, 6];
+            $order_code = "BOOK-" . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
+            $_SESSION['pending_order'] = [
+                'order_code' => $order_code,
+                'user_id' => $user_id,
+                'full_Name' => $full_Name,
+                'phone_Number' => $phone_Number,
+                'email' => $email,
+                'address' => $address,
+                'note' => $note,
+                'pay' => $pay,
+                'sum' => $sum,
+                'order_date' => $order_date
+            ];
+            $result = $this->OrderModel->createOrder($user_id, $full_Name, $phone_Number, $email, $address, $note, $pay, $sum, $order_date, $order_code);
+
+            if ($result === true) {
+                $_SESSION['message'] = "Đơn hàng đã được tạo thành công!";
+            } else {
+                $_SESSION['error-message'] = $result;
+            }
+
+            header("Location: " . APP_PATH . "/auth/cart");
+            exit();
+        }
+
+        $getPay = $this->CommonModel->getPaymentMethods();
+
+        $this->view("single_layout", [
+            "Title" => "Giỏ hàng",
+            "Page" => "cart/order",
+            "Script" => "auth/login",
+            "Pay" => $getPay,
+            "User" => $this->UserModel->getUserById($_SESSION["user_Info"][0]),
+            "Order" => $this->CartModel->getAvailableCartItems($_SESSION["user_Info"][0])
+        ]);
+    }
+
 
 }
 

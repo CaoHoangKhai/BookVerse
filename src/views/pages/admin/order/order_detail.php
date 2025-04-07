@@ -1,7 +1,6 @@
 <?php
 $order = $data["Order"];
-print_r($data["Order"])
-    ?>
+?>
 <h1 class="text-center">Thông Tin Đơn Hàng</h1>
 <div class="card mt-3 mb-3 p-4 shadow">
     <h5 class="text-primary">👤 Thông Tin Người dùng</h5>
@@ -40,9 +39,6 @@ print_r($data["Order"])
                 <div class="d-flex flex-column gap-2">
                     <p class="mb-0"><strong>Phương thức thanh toán: </strong>
                         <?= htmlspecialchars($order['PaymentMethod_name']); ?>
-                        (
-                        <?= $order['Payment_Status'] == 1 ? 'Đã thanh toán' : 'Chưa thanh toán'; ?>
-                        )
                     </p>
                     <p class="mb-0"><strong>Ngày đặt hàng: </strong>
                         <?= !empty($order['Order_date']) ? date("d/m/Y", strtotime($order['Order_date'])) : 'Không có dữ liệu'; ?>

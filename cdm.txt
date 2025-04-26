@@ -1,0 +1,481 @@
+-- Tạo cơ sở dữ liệu BookStore nếu chưa tồn tại
+CREATE DATABASE IF NOT EXISTS BookStore;
+
+-- Sử dụng cơ sở dữ liệu BookStore
+USE BookStore;
+
+-- Tạo bảng BookStatus để lưu trữ trạng thái của sách (ví dụ: 'Available', 'Out of stock')
+CREATE TABLE BookStatus (
+  Status_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id trạng thái
+  Status_name VARCHAR(50)  -- Tên trạng thái sách
+);
+
+-- Tạo bảng Category để lưu trữ danh mục sách (ví dụ: 'Fiction', 'Non-fiction')
+CREATE TABLE Category (
+  Category_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id danh mục
+  Category_name VARCHAR(255)  -- Tên danh mục sách
+);
+
+-- Tạo bảng Author để lưu thông tin tác giả sách
+CREATE TABLE Author (
+  Author_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id tác giả
+  Name VARCHAR(255),  -- Tên tác giả
+  Biography TEXT,  -- Tiểu sử của tác giả
+  Date_of_Birth DATE,  -- Ngày sinh tác giả
+  Nationality VARCHAR(100)  -- Quốc tịch tác giả
+);
+
+-- Tạo bảng Book để lưu trữ thông tin sách
+CREATE TABLE Book (
+  Book_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id sách
+  Title VARCHAR(255),  -- Tiêu đề sách
+  Author_id INT,  -- ID tác giả (liên kết với bảng Author)
+  Category_id INT,  -- ID danh mục (liên kết với bảng Category)
+  Description VARCHAR(255),  -- Mô tả sách
+  Price DECIMAL(10, 2),  -- Giá sách
+  Date_added DATE,  -- Ngày thêm sách vào hệ thống
+  Condition INT,  -- Tình trạng sách (mới, cũ...)
+  Status_id INT,  -- ID trạng thái sách (liên kết với bảng BookStatus)
+  FOREIGN KEY (Author_id) REFERENCES Author(Author_id),  -- Liên kết với bảng Author
+  FOREIGN KEY (Category_id) REFERENCES Category(Category_id),  -- Liên kết với bảng Category
+  FOREIGN KEY (Status_id) REFERENCES BookStatus(Status_id)  -- Liên kết với bảng BookStatus
+);
+CREATE TABLE BookInventory (
+    Inventory_id INT AUTO_INCREMENT PRIMARY KEY,  
+    Book_id INT NOT NULL,  -- Liên kết với bảng Book
+    Quantity INT DEFAULT 0 CHECK (Quantity >= 0),  -- Số lượng sách
+    FOREIGN KEY (Book_id) REFERENCES Book(Book_id) ON DELETE CASCADE
+);
+
+-- Tạo bảng BookImages để lưu trữ thông tin hình ảnh của sách
+CREATE TABLE BookImages (
+  Image_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id hình ảnh
+  Book_id INT,  -- ID sách (liên kết với bảng Book)
+  Image_URL VARCHAR(255),  -- Đường dẫn tới hình ảnh
+  Uploaded_at TIMESTAMP,  -- Thời gian tải lên hình ảnh
+  FOREIGN KEY (Book_id) REFERENCES Book(Book_id)  -- Liên kết với bảng Book
+);
+
+-- Tạo bảng Role để lưu trữ các vai trò người dùng (ví dụ: Admin, Customer)
+CREATE TABLE Role (
+  Role_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id vai trò
+  Role_name VARCHAR(50)  -- Tên vai trò người dùng
+);
+
+-- Tạo bảng User để lưu thông tin người dùng (khách hàng, quản trị viên)
+CREATE TABLE User (
+  User_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id người dùng
+  Full_Name VARCHAR(100),  -- Tên đầy đủ người dùng
+  Phone_Number VARCHAR(15),  -- Số điện thoại người dùng
+  Pass_Word VARCHAR(255),  -- Mật khẩu người dùng
+  Email VARCHAR(100) UNIQUE,  -- Địa chỉ email (chỉ có thể duy nhất)
+  City VARCHAR(100),  -- Thành phố của người dùng
+  District VARCHAR(100),  -- Quận/huyện của người dùng
+  Address VARCHAR(255),  -- Địa chỉ người dùng
+  Role_id INT,  -- ID vai trò người dùng (liên kết với bảng Role)
+  Status INT, --- 1 là còn hoạt động 2 là bị hủy kích hoạt
+  FOREIGN KEY (Role_id) REFERENCES Role(Role_id)  -- Liên kết với bảng Role
+);
+
+-- Tạo bảng Cart để lưu trữ giỏ hàng của người dùng
+CREATE TABLE Cart (
+  Cart_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id giỏ hàng
+  User_id INT,  -- ID người dùng (liên kết với bảng User)
+  Book_id INT,  -- ID sách (liên kết với bảng Book)
+  Quantity INT,  -- Số lượng sách trong giỏ hàng
+  FOREIGN KEY (User_id) REFERENCES User(User_id),  -- Liên kết với bảng User
+  FOREIGN KEY (Book_id) REFERENCES Book(Book_id)  -- Liên kết với bảng Book
+);
+
+-- Tạo bảng Order để lưu trữ thông tin đơn hàng
+CREATE TABLE `Order` (
+  Order_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id đơn hàng
+  User_id INT,  -- ID người dùng (liên kết với bảng User)
+  Full_Name VARCHAR(255),  -- Tên người nhận đơn hàng
+  Phone_Number VARCHAR(15),  -- Số điện thoại người nhận
+  Email VARCHAR(100),  -- Địa chỉ email người nhận
+  Address VARCHAR(255),  -- Địa chỉ người nhận
+  Note TEXT,  -- Ghi chú đơn hàng
+  Status INT(1),  -- Trạng thái đơn hàng
+  Payment_method INT(1),  -- Phương thức thanh toán
+  Sum DECIMAL(10, 2),  -- Tổng giá trị đơn hàng
+  Order_date DATETIME,  -- Ngày giờ đặt hàng
+  FOREIGN KEY (User_id) REFERENCES User(User_id)  -- Liên kết với bảng User
+);
+
+-- Tạo bảng OrderDetail để lưu trữ chi tiết các món hàng trong đơn hàng
+CREATE TABLE OrderDetail (
+  OrderDetail_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id chi tiết đơn hàng
+  Order_id INT,  -- ID đơn hàng (liên kết với bảng Order)
+  Book_id INT,  -- ID sách (liên kết với bảng Book)
+  Quantity INT,  -- Số lượng sách trong chi tiết đơn hàng
+  Price DECIMAL(10, 2),  -- Giá sách tại thời điểm mua
+  Item_code VARCHAR(50),  -- Mã sản phẩm
+  FOREIGN KEY (Order_id) REFERENCES `Order`(Order_id),  -- Liên kết với bảng Order
+  FOREIGN KEY (Book_id) REFERENCES Book(Book_id)  -- Liên kết với bảng Book
+);
+
+-- Tạo bảng ProductDetail để lưu trữ thông tin chi tiết sản phẩm
+CREATE TABLE ProductDetail (
+  ProductDetail_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id chi tiết sản phẩm
+  Book_id INT,  -- ID sách (liên kết với bảng Book)
+  Item_code VARCHAR(50),  -- Mã sản phẩm
+  Expected_stock_date DATE,  -- Ngày dự kiến có sẵn hàng
+  Expected_publish_date DATE,  -- Ngày dự kiến phát hành
+  Supplier_name VARCHAR(255),  -- Tên nhà cung cấp
+  Author VARCHAR(255),  -- Tên tác giả
+  Publisher VARCHAR(255),  -- Nhà xuất bản
+  Publish_year INT,  -- Năm xuất bản
+  Language VARCHAR(50),  -- Ngôn ngữ sách
+  Weight DECIMAL(10, 2),  -- Trọng lượng sách
+  Packaging_size VARCHAR(50),  -- Kích thước bao bì
+  Page_count INT,  -- Số trang sách
+  Binding_type VARCHAR(50),  -- Loại bìa sách
+  FOREIGN KEY (Book_id) REFERENCES Book(Book_id)  -- Liên kết với bảng Book
+);
+
+-- Tạo bảng OrderStatusHistory để lưu trữ lịch sử trạng thái đơn hàng
+CREATE TABLE OrderStatusHistory (
+  OrderStatusHistory_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id lịch sử trạng thái đơn hàng
+  Order_id INT,  -- ID đơn hàng (liên kết với bảng Order)
+  Status ENUM('Pending', 'Completed', 'Canceled', 'Shipped'),  -- Trạng thái đơn hàng
+  Status_date DATETIME,  -- Thời gian thay đổi trạng thái
+  FOREIGN KEY (Order_id) REFERENCES `Order`(Order_id)  -- Liên kết với bảng Order
+);
+
+-- Tạo bảng Review để lưu trữ đánh giá của người dùng về sách
+CREATE TABLE Review (
+  Review_id INT AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng, id đánh giá
+  User_id INT,  -- ID người dùng (liên kết với bảng User)
+  Book_id INT,  -- ID sách (liên kết với bảng Book)
+  Rating INT,  -- Đánh giá sách (từ 1 đến 5)
+  Comment TEXT,  -- Bình luận của người dùng
+  Review_date DATETIME,  -- Ngày giờ đánh giá
+  FOREIGN KEY (User_id) REFERENCES User(User_id),  -- Liên kết với bảng User
+  FOREIGN KEY (Book_id) REFERENCES Book(Book_id)  -- Liên kết với bảng Book
+);
+
+
+tạo bảng địa chỉ cho user và khi đăng ký gọi hết ra cho user lựa chọn
+
+
+INSERT INTO User (Full_Name, Phone_Number, Pass_Word, Email, City, District, Address, Role_id, Status) VALUES
+('Nguyễn Văn A', '0987654321', 'password1', 'nguyenvana@example.com', 'Hà Nội', 'Ba Đình', 'Số 1, Đường ABC', 1, 1),
+('Trần Thị B', '0978123456', 'password2', 'tranthib@example.com', 'Hồ Chí Minh', 'Quận 1', 'Số 2, Đường XYZ', 2, 1),
+('Lê Văn C', '0965234789', 'password3', 'levanc@example.com', 'Đà Nẵng', 'Hải Châu', 'Số 3, Đường MNP', 1, 1),
+('Phạm Minh D', '0956473829', 'password4', 'phamminhd@example.com', 'Hải Phòng', 'Ngô Quyền', 'Số 4, Đường LMN', 2, 1),
+('Hoàng Thị E', '0948236574', 'password5', 'hoangthie@example.com', 'Cần Thơ', 'Ninh Kiều', 'Số 5, Đường UVW', 1, 2),
+('Đỗ Quốc F', '0932154786', 'password6', 'doquocf@example.com', 'Bình Dương', 'Dĩ An', 'Số 6, Đường XYZ', 2, 1),
+('Ngô Hữu G', '0923456789', 'password7', 'ngohuug@example.com', 'Đồng Nai', 'Biên Hòa', 'Số 7, Đường ABC', 1, 1),
+('Bùi Thanh H', '0912345678', 'password8', 'buithanhh@example.com', 'Hà Nội', 'Cầu Giấy', 'Số 8, Đường DEF', 2, 1),
+('Vũ Thị I', '0909876543', 'password9', 'vuthi@example.com', 'Hải Dương', 'TP Hải Dương', 'Số 9, Đường KLM', 1, 2),
+('Dương Minh J', '0896543210', 'password10', 'duongminhj@example.com', 'Thái Bình', 'TP Thái Bình', 'Số 10, Đường NOP', 2, 1),
+('Nguyễn Thị K', '0881234567', 'password11', 'nguyenthik@example.com', 'Hà Nội', 'Hoàn Kiếm', 'Số 11, Đường UVW', 1, 1),
+('Trịnh Công L', '0876543210', 'password12', 'trinhcongl@example.com', 'Hồ Chí Minh', 'Bình Thạnh', 'Số 12, Đường XYZ', 2, 1),
+('Hồ Văn M', '0865473829', 'password13', 'hovanm@example.com', 'Đà Nẵng', 'Sơn Trà', 'Số 13, Đường ABC', 1, 1),
+('Nguyễn Văn N', '0854321789', 'password14', 'nguyenvann@example.com', 'Hải Phòng', 'Kiến An', 'Số 14, Đường LMN', 2, 1),
+('Đinh Thị O', '0849216574', 'password15', 'dinhthio@example.com', 'Cần Thơ', 'Cái Răng', 'Số 15, Đường UVW', 1, 2),
+('Lương Văn P', '0832154786', 'password16', 'luongvanp@example.com', 'Bình Dương', 'Thuận An', 'Số 16, Đường XYZ', 2, 1),
+('Phan Quốc Q', '0823456789', 'password17', 'phanquocq@example.com', 'Đồng Nai', 'Long Thành', 'Số 17, Đường ABC', 1, 1),
+('Tạ Minh R', '0812345678', 'password18', 'taminhr@example.com', 'Hà Nội', 'Tây Hồ', 'Số 18, Đường DEF', 2, 1),
+('Lý Thị S', '0809876543', 'password19', 'lythis@example.com', 'Hải Dương', 'Nam Sách', 'Số 19, Đường KLM', 1, 2),
+('Quách Công T', '0796543210', 'password20', 'quachcongt@example.com', 'Thái Bình', 'Vũ Thư', 'Số 20, Đường NOP', 2, 1);
+
+
+
+
+
+
+
+
+1. toi_thay_hoa_vang_tren_co_xanh
+2. harry_potter_va_hon_da_phu_thuy
+3. mat_ma_da_vinci
+4. rung_na_uy
+5. it
+6. nha_gia_kim
+7. 1984
+8. an_mang_tren_song_nile
+9. nhung_nguoi_khon_kho
+10. chien_tranh_va_hoa_binh
+11. co_gai_trong_hinh
+12. bat_lua_mach
+13. bo_ba_rung_xanh
+14. giua_hai_the_gioi
+15. the_gioi_ngam
+16. con_duong_bi_mat
+17. giac_mo_cuoi_cung
+18. chan_troi_moi
+19. cuoc_chien_cuoi_cung
+20. kham_pha_vu_tru
+21. hanh_trinh_nguoc_thoi_gian
+22. bong_ma_trong_guong
+23. chuyen_xua_tich_cu
+24. mat_ngu_cua_nhung_vi_nhan
+25. suc_manh_cua_niem_tin
+
+UPDATE Category SET Category_name = 'Thơ ca', Category_type = 'tho_ca' WHERE Category_id = 11;
+UPDATE Category SET Category_name = 'Tuy bút tản văn', Category_type = 'tuy_but_tan_van' WHERE Category_id = 12;
+UPDATE Category SET Category_name = 'Phiêu lưu', Category_type = 'phieu_luu' WHERE Category_id = 13;
+UPDATE Category SET Category_name = 'Tôn giáo tâm linh', Category_type = 'ton_giao_tam_linh' WHERE Category_id = 14;
+UPDATE Category SET Category_name = 'Kinh tế', Category_type = 'kinh_te' WHERE Category_id = 15;
+UPDATE Category SET Category_name = 'Chính trị', Category_type = 'chinh_tri' WHERE Category_id = 16;
+UPDATE Category SET Category_name = 'Công nghệ', Category_type = 'cong_nghe' WHERE Category_id = 17;
+UPDATE Category SET Category_name = 'Y học', Category_type = 'y_hoc' WHERE Category_id = 18;
+UPDATE Category SET Category_name = 'Nghệ thuật', Category_type = 'nghe_thuat' WHERE Category_id = 19;
+UPDATE Category SET Category_name = 'Du lịch', Category_type = 'du_lich' WHERE Category_id = 20;
+
+Thông tin về một tác giả có thể bao gồm các yếu tố sau:
+
+Tên tác giả: Tên đầy đủ của tác giả.
+Giới thiệu về tác giả: Một đoạn mô tả ngắn gọn về tác giả, sự nghiệp và các thành tựu nổi bật.
+Ngày sinh: Ngày tháng năm sinh của tác giả.
+Quốc tịch: Quốc tịch hoặc nơi sinh của tác giả.
+Hình ảnh: Ảnh chân dung của tác giả (nếu có).
+Sách đã xuất bản: Danh sách các cuốn sách đã được tác giả viết hoặc tham gia viết.
+Giải thưởng/Thành tựu: Các giải thưởng hoặc thành tựu nổi bật trong sự nghiệp sáng tác.
+Phong cách viết: Mô tả về phong cách, thể loại sách hoặc các chủ đề tác giả thường viết.
+Liên kết với các tác giả khác: Thông tin về sự hợp tác hoặc ảnh hưởng giữa tác giả này với các tác giả khác.
+Website hoặc mạng xã hội: Liên kết đến các trang web cá nhân hoặc trang mạng xã hội (nếu có) của tác giả.
+
+-- Bảng category
+INSERT INTO `category` (`Category_id`, `Category_name`)
+VALUES
+(1, 'Văn học'),
+(2, 'Trinh thám'),
+(3, 'Kinh dị'),
+(4, 'Triết học'),
+(5, 'Khoa học viễn tưởng'),
+(6, 'Lịch sử'),
+(7, 'Tâm lý'),
+(8, 'Thiếu nhi'),
+(9, 'Giáo dục'),
+(10, 'Kinh tế');
+
+-- Bảng users
+INSERT INTO `users` (`User_id`, `Username`, `Email`, `Password`, `Phone`, `Address`, `User_Status`)
+VALUES
+(1, 'user1', 'user1@example.com', 'password1', '0901234567', 'Hà Nội', 1),
+(2, 'user2', 'user2@example.com', 'password2', '0912345678', 'TP. HCM', 1),
+(3, 'user3', 'user3@example.com', 'password3', '0923456789', 'Đà Nẵng', 1),
+(4, 'user4', 'user4@example.com', 'password4', '0934567890', 'Cần Thơ', 1),
+(5, 'user5', 'user5@example.com', 'password5', '0945678901', 'Hải Phòng', 1),
+(6, 'user6', 'user6@example.com', 'password6', '0956789012', 'Huế', 1),
+(7, 'user7', 'user7@example.com', 'password7', '0967890123', 'Nha Trang', 1),
+(8, 'user8', 'user8@example.com', 'password8', '0978901234', 'Vũng Tàu', 1),
+(9, 'user9', 'user9@example.com', 'password9', '0989012345', 'Bắc Ninh', 1),
+(10, 'user10', 'user10@example.com', 'password10', '0990123456', 'Quảng Ninh', 1);
+
+-- Bảng cart
+INSERT INTO `cart` (`Cart_id`, `User_id`, `Book_id`, `Quantity`)
+VALUES
+(1, 1, 1, 2),
+(2, 2, 3, 1),
+(3, 3, 5, 3),
+(4, 4, 7, 2),
+(5, 5, 9, 1),
+(6, 6, 11, 1),
+(7, 7, 13, 2),
+(8, 8, 15, 1),
+(9, 9, 17, 3),
+(10, 10, 19, 2);
+
+-- Bảng orders
+INSERT INTO `orders` (`Order_id`, `User_id`, `Order_date`, `Total_price`, `Order_status`)
+VALUES
+(1, 1, '2025-02-01', 240000, 'Đang xử lý'),
+(2, 2, '2025-02-02', 180000, 'Hoàn thành'),
+(3, 3, '2025-02-03', 510000, 'Đang giao'),
+(4, 4, '2025-02-04', 260000, 'Hủy'),
+(5, 5, '2025-02-05', 200000, 'Hoàn thành'),
+(6, 6, '2025-02-06', 130000, 'Đang xử lý'),
+(7, 7, '2025-02-07', 320000, 'Đang giao'),
+(8, 8, '2025-02-08', 170000, 'Hoàn thành'),
+(9, 9, '2025-02-09', 540000, 'Đang xử lý'),
+(10, 10, '2025-02-10', 440000, 'Hoàn thành');
+
+-- Bảng orderdetails
+INSERT INTO `orderdetails` (`OrderDetail_id`, `Order_id`, `Book_id`, `Quantity`, `Subtotal`)
+VALUES
+(1, 1, 1, 2, 240000),
+(2, 2, 3, 1, 180000),
+(3, 3, 5, 3, 510000),
+(4, 4, 7, 2, 260000),
+(5, 5, 9, 1, 200000),
+(6, 6, 11, 1, 130000),
+(7, 7, 13, 2, 320000),
+(8, 8, 15, 1, 170000),
+(9, 9, 17, 3, 540000),
+(10, 10, 19, 2, 440000);
+
+-- Bảng reviews
+INSERT INTO `reviews` (`Review_id`, `User_id`, `Book_id`, `Rating`, `Comment`, `Review_date`)
+VALUES
+(1, 1, 1, 5, 'Sách rất hay!', '2025-02-01'),
+(2, 2, 3, 4, 'Nội dung hấp dẫn nhưng hơi dài.', '2025-02-02'),
+(3, 3, 5, 5, 'Tuyệt vời! Đáng đọc.', '2025-02-03'),
+(4, 4, 7, 3, 'Tác phẩm ổn nhưng không phải gu của mình.', '2025-02-04'),
+(5, 5, 9, 4, 'Nội dung sâu sắc.', '2025-02-05'),
+(6, 6, 11, 5, 'Rất cảm động!', '2025-02-06'),
+(7, 7, 13, 4, 'Cốt truyện thú vị.', '2025-02-07'),
+(8, 8, 15, 5, 'Không thể bỏ qua.', '2025-02-08'),
+(9, 9, 17, 3, 'Sách khá hay nhưng giá hơi cao.', '2025-02-09'),
+(10, 10, 19, 5, 'Một trong những cuốn sách hay nhất.', '2025-02-10');
+
+
+(31, 'Những đứa trẻ mồ côi', 1, 8, 'Cuốn sách về tình bạn và tuổi thơ', 120000.00, '2024-02-07', 1),
+(32, 'Dế Mèn phiêu lưu ký', 1, 8, 'Cuộc phiêu lưu kỳ thú của Dế Mèn', 150000.00, '2024-02-07', 1),
+(33, 'Mắt biếc', 1, 8, 'Cuốn tiểu thuyết về tình yêu trong sáng', 130000.00, '2024-02-07', 1),
+(34, 'Cho tôi xin một vé đi tuổi thơ', 1, 8, 'Cuốn sách đầy cảm xúc về tuổi thơ', 110000.00, '2024-02-07', 1),
+(35, 'Tôi và chúng ta', 1, 8, 'Cuốn sách về sự trưởng thành', 140000.00, '2024-02-07', 1),
+(36, 'Cánh đồng bất tận', 1, 8, 'Cuốn tiểu thuyết về nông thôn và gia đình', 160000.00, '2024-02-07', 1),
+(37, 'Đoạn kết có hậu', 1, 8, 'Cuốn tiểu thuyết về tình yêu và cuộc sống', 125000.00, '2024-02-07', 1),
+(38, 'Người lạ trong tôi', 1, 8, 'Cuốn sách về tâm lý con người', 140000.00, '2024-02-07', 1),
+(39, 'Những vết thương cũ', 1, 8, 'Một câu chuyện về quá khứ và sự hàn gắn', 130000.00, '2024-02-07', 1),
+(40, 'Khởi đầu mới', 1, 8, 'Cuốn sách về sự thay đổi và khởi đầu mới', 150000.00, '2024-02-07', 1),
+(41, 'Hành trình tìm lại chính mình', 1, 8, 'Câu chuyện về một cuộc hành trình tự khám phá', 135000.00, '2024-02-07', 1),
+(42, 'Tình yêu trong mùa thu', 1, 8, 'Cuốn tiểu thuyết về tình yêu lãng mạn', 120000.00, '2024-02-07', 1),
+(43, 'Người yêu dấu', 1, 8, 'Một câu chuyện về sự xa cách và hàn gắn', 145000.00, '2024-02-07', 1),
+(44, 'Hòa bình trong trái tim', 1, 8, 'Cuốn sách về tâm lý học và sự bình an trong cuộc sống', 125000.00, '2024-02-07', 1),
+(45, 'Lời hứa cuối cùng', 1, 8, 'Cuốn tiểu thuyết về tình yêu và sự hy sinh', 160000.00, '2024-02-07', 1),
+(46, 'Giấc mơ chưa hoàn thành', 1, 8, 'Cuốn sách về những giấc mơ và mục tiêu trong cuộc sống', 150000.00, '2024-02-07', 1),
+(47, 'Bên bờ vực thẳm', 1, 8, 'Câu chuyện về sự mất mát và sự tìm lại', 140000.00, '2024-02-07', 1),
+(48, 'Chờ đợi một điều kỳ diệu', 1, 8, 'Cuốn sách về hy vọng và lòng kiên trì', 130000.00, '2024-02-07', 1),
+(49, 'Một mình giữa đám đông', 1, 8, 'Cuốn sách về sự cô đơn và tìm kiếm sự kết nối', 145000.00, '2024-02-07', 1),
+(50, 'Đứng vững giữa bão táp', 1, 8, 'Câu chuyện về sự kiên cường và nghị lực', 140000.00, '2024-02-07', 1);
+(51, 'Tình yêu bền vững', 1, 8, 'Cuốn tiểu thuyết về tình yêu và sự bền vững', 135000.00, '2024-02-07', 1),
+(52, 'Sống để yêu thương', 1, 8, 'Cuốn sách về lòng nhân ái và tình yêu', 120000.00, '2024-02-07', 1),
+(53, 'Bức tranh hoàn hảo', 1, 8, 'Cuốn sách về sự hoàn hảo và những khiếm khuyết', 150000.00, '2024-02-07', 1),
+(54, 'Nơi con tim yêu thương', 1, 8, 'Câu chuyện về tình yêu và gia đình', 130000.00, '2024-02-07', 1),
+(55, 'Một mùa hè không quên', 1, 8, 'Cuốn sách về ký ức và những mùa hè tươi đẹp', 140000.00, '2024-02-07', 1),
+(56, 'Khi đêm buông xuống', 1, 8, 'Cuốn tiểu thuyết về sự thay đổi trong bóng tối', 160000.00, '2024-02-07', 1),
+(57, 'Giấc mơ thành hiện thực', 1, 8, 'Cuốn sách về sự khát khao và theo đuổi ước mơ', 125000.00, '2024-02-07', 1),
+(58, 'Cơn mưa nhẹ nhàng', 1, 8, 'Cuốn tiểu thuyết về tình yêu nhẹ nhàng và cảm xúc', 135000.00, '2024-02-07', 1),
+(59, 'Những ngày không quên', 1, 8, 'Câu chuyện về những khoảnh khắc đáng nhớ trong cuộc sống', 120000.00, '2024-02-07', 1),
+(60, 'Điều kỳ diệu trong cuộc sống', 1, 8, 'Cuốn sách về những điều kỳ diệu và sự thay đổi cuộc sống', 150000.00, '2024-02-07', 1),
+(61, 'Ánh sáng trong đêm tối', 1, 8, 'Cuốn sách về hy vọng và tìm thấy ánh sáng trong thử thách', 140000.00, '2024-02-07', 1),
+(62, 'Lối đi giữa cơn bão', 1, 8, 'Cuốn tiểu thuyết về sự vượt qua khó khăn trong cuộc sống', 130000.00, '2024-02-07', 1),
+(63, 'Hồi ức của một thời tuổi trẻ', 1, 8, 'Cuốn sách về tuổi trẻ và những ký ức không thể quên', 125000.00, '2024-02-07', 1),
+(64, 'Mở cửa đón ánh sáng', 1, 8, 'Cuốn sách về sự tự do và tìm kiếm niềm vui trong cuộc sống', 145000.00, '2024-02-07', 1),
+(65, 'Cánh cửa cuộc đời', 1, 8, 'Câu chuyện về sự thay đổi và sự chọn lựa trong cuộc đời', 150000.00, '2024-02-07', 1),
+(66, 'Thử thách lớn nhất', 1, 8, 'Cuốn sách về sự can đảm đối mặt với thử thách', 130000.00, '2024-02-07', 1),
+(67, 'Vượt qua bóng tối', 1, 8, 'Cuốn tiểu thuyết về sự chiến thắng trong cuộc sống', 140000.00, '2024-02-07', 1),
+(68, 'Sức mạnh của niềm tin', 1, 8, 'Cuốn sách về niềm tin và sức mạnh vượt qua khó khăn', 125000.00, '2024-02-07', 1),
+(69, 'Khám phá bản thân', 1, 8, 'Cuốn sách về hành trình tìm lại chính mình', 135000.00, '2024-02-07', 1),
+(70, 'Cuộc đời là những chuyến đi', 1, 8, 'Câu chuyện về những cuộc phiêu lưu và sự trưởng thành', 160000.00, '2024-02-07', 1);
+
+(71, 'Điều kỳ diệu trong cuộc sống', 1, 8, 'Cuốn sách về những điều kỳ diệu và sự thay đổi cuộc sống', 150000.00, '2024-02-07', 1),
+(72, 'Đoạn đường phía trước', 1, 8, 'Cuốn tiểu thuyết về sự lựa chọn và con đường phía trước', 135000.00, '2024-02-07', 1),
+(73, 'Là chính mình', 1, 8, 'Cuốn sách về tự do và sống thật với bản thân', 140000.00, '2024-02-07', 1),
+(74, 'Bước đi trong đêm tối', 1, 8, 'Câu chuyện về việc đối mặt với nỗi sợ hãi và bước đi trong bóng tối', 130000.00, '2024-02-07', 1),
+(75, 'Tình yêu lớn nhất', 1, 8, 'Cuốn sách về tình yêu sâu sắc và những thử thách trong mối quan hệ', 125000.00, '2024-02-07', 1),
+(76, 'Sự lựa chọn của trái tim', 1, 8, 'Cuốn sách về sự chọn lựa trong tình yêu và cuộc sống', 150000.00, '2024-02-07', 1),
+(77, 'Mặt trời sau mưa', 1, 8, 'Cuốn tiểu thuyết về sự kiên trì và hy vọng trong cuộc sống', 135000.00, '2024-02-07', 1),
+(78, 'Những cánh đồng vàng', 1, 8, 'Cuốn sách về vẻ đẹp của thiên nhiên và hành trình khám phá', 140000.00, '2024-02-07', 1),
+(79, 'Một ngày mới', 1, 8, 'Cuốn sách về sự thay đổi và niềm tin vào ngày mai', 130000.00, '2024-02-07', 1),
+(80, 'Đoàn tàu qua đại dương', 1, 8, 'Cuốn sách về những chuyến đi dài và những câu chuyện về biển cả', 145000.00, '2024-02-07', 1),
+(81, 'Bầu trời không giới hạn', 1, 8, 'Cuốn sách về sự tự do và ước mơ bay cao', 155000.00, '2024-02-07', 1),
+(82, 'Tình yêu và những cuộc phiêu lưu', 1, 8, 'Cuốn tiểu thuyết về tình yêu và sự mạo hiểm trong cuộc sống', 140000.00, '2024-02-07', 1),
+(83, 'Cuộc sống là một cuộc chơi', 1, 8, 'Cuốn sách về việc sống tự do và chấp nhận những thay đổi', 130000.00, '2024-02-07', 1),
+(84, 'Chuyến đi không quay lại', 1, 8, 'Cuốn sách về hành trình tìm kiếm bản thân và không quay lại', 125000.00, '2024-02-07', 1),
+(85, 'Bình yên sau cơn bão', 1, 8, 'Cuốn tiểu thuyết về việc tìm lại bình yên sau những khó khăn', 140000.00, '2024-02-07', 1),
+(86, 'Lựa chọn cuối cùng', 1, 8, 'Cuốn sách về quyết định quan trọng trong cuộc đời', 150000.00, '2024-02-07', 1),
+(87, 'Những ngôi sao lấp lánh', 1, 8, 'Cuốn sách về những ước mơ lớn và sự nỗ lực đạt được chúng', 135000.00, '2024-02-07', 1),
+(88, 'Hành trình bất tận', 1, 8, 'Cuốn tiểu thuyết về cuộc hành trình dài và sự khám phá', 130000.00, '2024-02-07', 1),
+(89, 'Tình yêu không có giới hạn', 1, 8, 'Cuốn sách về tình yêu vĩnh cửu và sự vượt qua mọi khó khăn', 125000.00, '2024-02-07', 1),
+(90, 'Mong đợi những điều tốt đẹp', 1, 8, 'Cuốn sách về niềm tin và hy vọng vào tương lai', 150000.00, '2024-02-07', 1),
+(91, 'Bước ngoặt cuộc đời', 1, 8, 'Cuốn sách về những quyết định quan trọng làm thay đổi cuộc sống', 140000.00, '2024-02-07', 1),
+(92, 'Những điều chưa nói', 1, 8, 'Cuốn tiểu thuyết về sự giấu kín và những câu chuyện chưa kể', 130000.00, '2024-02-07', 1),
+(93, 'Khám phá thế giới', 1, 8, 'Cuốn sách về những chuyến phiêu lưu và sự mở rộng tầm nhìn', 120000.00, '2024-02-07', 1),
+(94, 'Khi trái tim lên tiếng', 1, 8, 'Cuốn sách về cảm xúc và những quyết định từ trái tim', 140000.00, '2024-02-07', 1),
+(95, 'Từ bỏ mọi thứ', 1, 8, 'Cuốn sách về việc từ bỏ những thứ không cần thiết để sống thật với bản thân', 125000.00, '2024-02-07', 1),
+(96, 'Đón nhận yêu thương', 1, 8, 'Cuốn sách về sự mở lòng và đón nhận yêu thương trong cuộc sống', 150000.00, '2024-02-07', 1),
+(97, 'Về nhà', 1, 8, 'Cuốn sách về sự trở về với chính mình và gia đình', 130000.00, '2024-02-07', 1),
+(98, 'Những điều tuyệt vời', 1, 8, 'Cuốn sách về những điều kỳ diệu xảy ra trong cuộc sống', 140000.00, '2024-02-07', 1),
+(99, 'Sự thật từ sâu thẳm', 1, 8, 'Cuốn sách về việc đối mặt với sự thật và khám phá những điều chưa biết', 135000.00, '2024-02-07', 1),
+(100, 'Tự do và hành động', 1, 8, 'Cuốn sách về sự tự do và hành động theo ước mơ', 150000.00, '2024-02-07', 1);
+
+
+(1,1,'Nguyễn Văn A','0987654321','nguyenvana@example.com','Số 1, Đường ABC','Giao Hàng trước 11h',1,7,5800000.00,'2025-02-08'),
+(2,2,'Trần Thị B','0978123456','tranthib@example.com','Số 2, Đường XYZ','Giao trước 12h',1,1,350000.00,'2024-02-01'),
+(3,3,'Lê Văn C','0965234789','levanc@example.com','Số 3, Đường MNP','Không gọi điện khi giao',2,2,450000.00,'2024-02-02'),
+(4,4,'Phạm Minh D','0956473829','phamminhd@example.com','Số 4, Đường LMN','Giao hàng tận cửa',1,1,280000.00,'2024-02-03'),
+(5,5,'Hoàng Thị E','0948236574','hoangthie@example.com','Số 5, Đường UVW','Liên hệ trước khi giao',2,2,320000.00,'2024-02-04'),
+(6,6,'Đỗ Quốc F','0932154786','doquocf@example.com','Số 6, Đường XYZ','Giao hàng trong giờ hành chính',1,1,510000.00,'2024-02-05'),
+(7,14,'Cao Hoàng Khải','0834477131','hoangcao230703@gmail.com','Hẻm 553, Đường 30/4','Kiểm tra hàng trước khi nhận',2,1,600000.00,'2024-02-06'),
+(8,25,'Cao Hoàng Khải','0943355467','caokhai974@gmail.com','61-63, Lý Văn Lâm, Khóm 3, Phường 1','Giao sau 18h',1,2,720000.00,'2024-02-07'),
+(9,26,'Ngô Hữu G','0923456789','ngohuug@example.com','Số 7, Đường AB','Không để hàng ngoài cổng',2,1,480000.00,'2024-02-08'),
+(10,27,'Bùi Thanh H','0912345678','buithanhh@example.com','Số 8, Đường DEF','Gọi điện khi đến',1,2,560000.00,'2024-02-09'),
+(11,28,'Vũ Thị I','0909876543','vuthi@example.com','Số 9, Đường KLM','Không giao vào chủ nhật',2,1,390000.00,'2024-02-10'),
+(12,29,'Nguyễn Minh J','0912456789','nguyenminh@example.com','Số 10, Đường PQR','Liên hệ trước khi giao',2,1,530000.00,'2024-02-11'),
+(13,30,'Trần Thị K','0923567890','tranthik@example.com','Số 11, Đường STU','Giao hàng vào sáng sớm',1,2,650000.00,'2024-02-12'),
+(14,31,'Lê Văn L','0934678901','levanl@example.com','Số 12, Đường VWX','Giao sau 18h',2,1,420000.00,'2024-02-13'),
+(15,32,'Phạm Thanh M','0945789012','phamthanm@example.com','Số 13, Đường YZA','Không giao vào ngày lễ',1,2,480000.00,'2024-02-14'),
+(16,33,'Hoàng Thị N','0956890123','hoangthn@example.com','Số 14, Đường ABC','Giao hàng tận nơi',2,1,550000.00,'2024-02-15'),
+(17,34,'Đỗ Minh O','0967901234','dominho@example.com','Số 15, Đường DEF','Giao vào buổi chiều',1,2,470000.00,'2024-02-16'),
+(18,35,'Cao Thanh P','0978012345','caothanp@example.com','Số 16, Đường GHI','Liên hệ trước khi giao',2,1,500000.00,'2024-02-17'),
+(19,36,'Ngô Minh Q','0989123456','ngominhq@example.com','Số 17, Đường JKL','Giao vào cuối tuần',1,2,540000.00,'2024-02-18'),
+(20,37,'Bùi Thanh R','0990234567','buithanhr@example.com','Số 18, Đường MNO','Không giao vào thứ hai',2,1,600000.00,'2024-02-19');
+
+http://localhost/BookSwapHub/authors/authors_list // Xem danh sách tác giả
+http://localhost/BookSwapHub/authors/author_detail/1 // Xem chi tiết tác giả
+http://localhost/BookSwapHub/orders/orders_list // Xem danh sách đơn hàng
+http://localhost/BookSwapHub/orders/orders_list/$id // Xem chi tiết đơn hàng
+http://localhost/BookSwapHub/products/products_list // Xem danh sách sản phẩm
+http://localhost/BookSwapHub/products/products_list/$id // Xem chi tiết sản phẩm
+http://localhost/BookSwapHub/users/users_list // Xem danh sách khách hàng
+http://localhost/BookSwapHub/users/users_list/$id // Xem chi tiết khách hàng
+http://localhost/BookSwapHub/dashboard // Xem thông tin của admin
+
+
+
+xuất file hóa đơn thành pdf
+tạo + - cart
+chỗ thanh toán
+
+orders@bookswaphub.com khi khách hàng đặt bấm tích để gửi email
+NoithatKimyen.id.vn
+
+
+views/pages có 
+admin => dùng cho người quản trị 
+auth => 
+author => dùng cho tác giả
+cart=> giỏ hàng
+contact => liên hệ
+error => hiện lỗi
+news => tin tức
+policy => chính sách
+product =>  hiển thị sản phẩm (bán sách)
+seller => cho nhà đăng ký đăng lên sản phẩm
+user => cho người dùng (khách hàng)
+
+
+
+title=1212121
+description=sc
+image1=nguyen-ngoc-tu-sach-vanvn.jpg
+content1=<p>scsc<%2Fp>
+image2=
+content2=<p>sc<%2Fp>
+addNews=Thêm+Tin+Tức
+current_date=2025-03-29
+
+
+Chưa có xem tin tức chi tiết của Seller
+
+
+Nguyễn Ngọc Tư sinh năm 1976 tại Đầm Dơi, Cà Mau. Là nữ nhà văn trẻ của Hội nhà văn Việt Nam. Với niềm đam mê viết lách, chị miệt mài viết như một cách giải tỏa và thể nghiệm, chị biết rằng chị muốn viết về những điều gần gũi nhất xung quanh cuộc sống của mình. Giọng văn chị đậm chất Nam bộ, là giọng kể mềm mại mà sâu cay về những cuộc đời éo le, những số phận chìm nổi. Cái chất miền quê sông nước ngấm vào các tác phẩm, thấm đẫm cái tình của làng, của đất, của những con người chân chất hồn hậu nhưng ít nhiều gặp những bất hạnh.
+
+Âm thầm đến với văn chương và bừng sáng khi được nhận giải Nhất cuộc thi Văn học tuổi 20 của NXB Trẻ, Nguyễn Ngọc Tư đã trở thành tâm điểm của sự hy vọng vào một nền văn trẻ đương đại. Chị đã tiếp tục có những cú nhảy ngoạn mục trên chặng đường văn cùng những tác phẩm được giới chuyên môn đánh giá cao. Tập truyện ngắn Cánh đồng bất tận của chị gây được tiếng vang lớn, nhận được nhiều giải thưởng cũng như chuyển thể thành kịch, phim điện ảnh.
+
+Các mốc sự kiện văn chương đáng nhớ:
+
+2000: Giải Nhất cuộc vận động sáng tác Văn học tuổi 20 lần 2 với tác phẩm Ngọn đèn không tắt, giải Mai vàng ở hạng mục Nhà văn xuất sắc.
+2001: Giải B Hội nhà văn Việt Nam với tác phẩm Ngọn đèn không tắt.
+2003: Là một trong Mười nhân vật trẻ xuất sắc tiêu biểu của năm 2002.
+2006: Giải thưởng Hội nhà văn Việt Nam năm 2006 với tác phẩm Cánh đồng bất tận.
+2008: Giải thưởng văn học ASEAN với tác phẩm Ngọn đèn không tắt và Cánh đồng bất tận.
+2018: Giải thưởng LiBeraturpreis 2018 do Hiệp hội Quảng bá văn học châu Á, châu Phi, Mỹ Latin tại Đức (Litprom) bình chọn với tác phẩm Cánh đồng bất tận. Chị còn tham gia triển khai dự án trị giá 6.000 EU bằng các hoạt động tổ chức sáng tác dành cho nữ giới tại Việt Nam.
+2019: Thuộc Top 50 người phụ nữ có ảnh hưởng nhất tại Việt Nam 2018 do tạp chí Forbes bình chọn.
+Các tác phẩm của Nguyễn Ngọc Tư được tái bản nhiều lần và được dịch ra tiếng Hàn, tiếng Anh, tiếng Thụy Điển, tiếng Đức.

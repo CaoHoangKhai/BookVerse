@@ -1,0 +1,24 @@
+/* Chắc chắn rằng ảnh có kích thước và viền đẹp */
+img {
+    width: 100px;
+    height: 120px;
+    transition: transform 0.25s ease;
+    /* Hiệu ứng phóng to nhẹ nhàng */
+    cursor: zoom-in;
+    /* Đổi con trỏ khi hover */
+}
+
+/* Khi di chuột vào ảnh */
+img:hover {
+    transform: scale(5.0)
+        /* Phóng to ảnh lên */
+}
+.img-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
